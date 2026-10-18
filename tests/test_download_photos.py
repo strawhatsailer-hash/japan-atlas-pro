@@ -28,6 +28,14 @@ class PhotoBundlerTests(unittest.TestCase):
         self.assertIn('File:Tokyo Tower close up 1.jpg', downloader.CURATED_FILE_TITLES['t7'])
         self.assertIn('File:Magnet by Shibuya 109 in Shibuya Crossing in Tokyo, 2019 - 784.jpg', downloader.CURATED_FILE_TITLES['t9'])
 
+
+    def test_mount_fuji_has_a_dedicated_curated_photo_bundle(self):
+        self.assertIn('File:Mount Fuji view from Lake Kawaguchi 2024-12-01.jpg',
+                      downloader.CURATED_FILE_TITLES['f0'])
+        self.assertIn('f0', downloader.QUERY_VARIANTS)
+        places = __import__('json').loads((downloader.ROOT / 'places.json').read_text(encoding='utf-8'))
+        self.assertTrue(any(p['id'] == 'f0' and p['name'] == 'Mount Fuji (landmark pin)' for p in places))
+
     def test_curated_lookup_uses_verified_file_titles_and_keeps_licence_metadata(self):
         titles = downloader.CURATED_FILE_TITLES['t10']
         pages = {}
@@ -51,6 +59,12 @@ class PhotoBundlerTests(unittest.TestCase):
         titles = ' '.join(downloader.CURATED_FILE_TITLES['t9'])
         self.assertIn('MAGNET by SHIBUYA109', titles)
         self.assertNotIn('Taiwan', titles)
+
+    def test_explicit_refresh_recurates_valid_cached_curated_photos_even_when_version_matches(self):
+        allowed = {x.removeprefix('File:').casefold() for x in downloader.CURATED_FILE_TITLES['t8']}
+        old_valid = [{'title':'The iconic Godzilla in Shinjuku area, Tokyo, Japan.jpg'}]
+        self.assertTrue(downloader.should_recurate(allowed, old_valid, '4', '4', True))
+        self.assertFalse(downloader.should_recurate(allowed, old_valid, '4', '4', False))
 
     def test_cached_local_asset_is_reused(self):
         with tempfile.TemporaryDirectory() as tmp:
