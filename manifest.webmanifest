@@ -1,0 +1,11 @@
+{
+  "name": "Japan Atlas Pro",
+  "short_name": "Japan Atlas",
+  "description": "Japan trip planner with places, itinerary, budget and readiness checklist.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f5f7fb",
+  "theme_color": "#ffffff",
+  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

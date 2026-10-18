@@ -4,6 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#ffffff">
+<meta name="description" content="A mobile-friendly Japan trip planner with itinerary, places, map, budget and readiness checklist.">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
 <title>Japan Atlas Pro — Japan Trip Workspace</title>
 <style>
  :root{
@@ -136,6 +139,29 @@ tr:hover td{background:#f3f7fb!important}
 </style>
 
 <style>.map-wrap #realMap,.map-wrap #realMap2{display:block!important;position:absolute!important;inset:0!important;width:100%;height:100%;z-index:3;background:#f3f6f8}.map-wrap .map-fallback{display:none!important}.map-wrap{isolation:isolate}.maplibregl-ctrl-group{border-radius:10px!important;overflow:hidden;box-shadow:0 2px 10px #20334d20!important}.maplibregl-ctrl button{width:38px!important;height:38px!important}.maplibregl-popup-content{border-radius:12px!important;padding:12px!important}.maplibregl-ctrl-attrib{font-size:10px!important}</style>
+
+<style id="atlas-polish">
+:root{color-scheme:light;--bg:#f5f7fb;--panel:#fff;--text:#172033;--muted:#64748b;--line:#d8e1eb;--accent:#176bda;--shadow:0 5px 22px rgba(25,45,75,.06)}
+html{scroll-behavior:smooth}body{background:var(--bg);color:var(--text)}
+input,select,textarea{background:#fff!important;color:#172033!important;border:1px solid #cbd5e1!important;color-scheme:light}
+input::placeholder,textarea::placeholder{color:#78869a!important;opacity:1}
+.budget-row input,.placeRows input,.status-select{background:#fff!important;color:#172033!important}
+.check-item{background:#fff!important;color:#172033!important;border-color:#d8e1eb!important}
+.check-item small,.tiny,.subtitle{color:#64748b!important}
+.budget-total{background:#fff!important;color:#172033!important;border:1px solid #d8e1eb!important}
+.budget-total .big{color:#172033!important}.budget-total .stat-label,.budget-total .stat-note{color:#64748b!important}
+.day-banner{background:#f0f5fc!important;color:#172033!important}
+.mobile-nav{background:rgba(255,255,255,.97)!important;backdrop-filter:blur(16px);padding-bottom:calc(8px + env(safe-area-inset-bottom))}
+.map-wrap{min-height:430px;overflow:hidden;border-radius:14px;background:#eaf1f5!important}
+.maplibregl-popup-content{font-family:system-ui,-apple-system,sans-serif;max-width:min(280px,78vw);box-shadow:0 8px 28px #20334d20}
+.maplibregl-popup-close-button{font-size:22px;padding:4px 8px;color:#64748b}
+.maplibregl-ctrl-attrib{max-width:70vw;white-space:normal!important}
+.map-online-notice{max-width:calc(100% - 76px);line-height:1.4;box-shadow:0 2px 10px #20334d0c}
+.btn:focus-visible,button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #93c5fd!important;outline-offset:2px}
+.card,.stat,.day-card{box-shadow:0 3px 16px rgba(30,50,80,.045)!important}
+@media(max-width:720px){.map-wrap{min-height:62vh;min-height:clamp(420px,62svh,690px)}.maplibregl-ctrl-top-right{top:58px!important}.map-online-notice{font-size:10px!important;padding:7px 9px!important}.maplibregl-popup-content{padding:10px!important}.budget-row{grid-template-columns:minmax(0,1fr) 92px 32px!important}.budget-row input{min-width:0;font-size:14px!important}.topbar{position:sticky;top:0;z-index:1001}.mobile-nav{z-index:1100}.main{padding-bottom:calc(100px + env(safe-area-inset-bottom))!important}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+</style>
 </head>
 <body>
 <div class="app">
@@ -462,5 +488,12 @@ bind();renderAll();
 </script>
 
 <!-- UX patch: readable white controls and synchronous Google Maps route navigation. Online street tiles still require connectivity. -->
+<script>
+// Progressive Web App shell: the planner can reopen offline after its first successful visit.
+// Live map styles/tiles and external routing are online services and are not claimed to work offline.
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
+</script>
 </body>
 </html>
