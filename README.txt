@@ -19,3 +19,8 @@ Important: live vector tiles require internet. This package does not include off
 
 
 UX refresh: selected-place inspector now loads a horizontal gallery of multiple reference photos from Wikimedia Commons when online. Each photo links to its Commons source page for attribution/licence details. Image results depend on Commons search availability and should be visually checked before relying on a specific image. The nearby places list shows a thumbnail when photos have loaded. The app remains usable if photo search is unavailable.
+
+
+Latest update: place navigation now searches using the human-readable place name and address rather than only raw coordinates. The route builder also sends readable place names/addresses to Google Maps. Place inspector photo galleries use staged Wikimedia Commons searches and show image source/licence links; photo loading requires internet.
+
+Latest update: navigation searches by human-readable place name/address rather than raw coordinates. Route builder uses readable place labels. Photo galleries use staged Wikimedia Commons searches and link to source/licence details; photo loading requires internet.
