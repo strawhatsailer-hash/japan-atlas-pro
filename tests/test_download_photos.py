@@ -26,6 +26,7 @@ class PhotoBundlerTests(unittest.TestCase):
         self.assertIn('File:Godzilla in Shinjuku (53416845058).jpg', downloader.CURATED_FILE_TITLES['t8'])
         self.assertIn('File:Suga Shrine staircase, 9 December 2024.jpg', downloader.CURATED_FILE_TITLES['t10'])
         self.assertIn('File:Tokyo Tower close up 1.jpg', downloader.CURATED_FILE_TITLES['t7'])
+        self.assertIn('File:Magnet by Shibuya 109 in Shibuya Crossing in Tokyo, 2019 - 784.jpg', downloader.CURATED_FILE_TITLES['t9'])
 
     def test_curated_lookup_uses_verified_file_titles_and_keeps_licence_metadata(self):
         titles = downloader.CURATED_FILE_TITLES['t10']
@@ -45,9 +46,11 @@ class PhotoBundlerTests(unittest.TestCase):
         self.assertEqual([x['title'] for x in images], [x.removeprefix('File:') for x in titles])
         self.assertTrue(all(x['license'] == 'CC BY-SA 4.0' for x in images))
 
-    def test_mugiwara_is_not_substituted_with_unrelated_branch(self):
-        self.assertIn('t9', downloader.KNOWN_NO_VERIFIED_MATCH)
-        self.assertIn('Taiwan', downloader.KNOWN_NO_VERIFIED_MATCH['t9'])
+    def test_mugiwara_uses_location_reference_photos_not_taiwan_store(self):
+        self.assertNotIn('t9', downloader.KNOWN_NO_VERIFIED_MATCH)
+        titles = ' '.join(downloader.CURATED_FILE_TITLES['t9'])
+        self.assertIn('MAGNET by SHIBUYA109', titles)
+        self.assertNotIn('Taiwan', titles)
 
     def test_cached_local_asset_is_reused(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -96,12 +99,12 @@ class PhotoBundlerTests(unittest.TestCase):
             photo_dir.mkdir(parents=True)
             manifest_path = photo_dir / 'manifest.json'
             now = datetime.now(timezone.utc).isoformat()
-            manifest_path.write_text(__import__('json').dumps({'t9':[], '_meta':{'lastAttempt':{'t9':now}}}), encoding='utf-8')
-            with patch.object(downloader, 'DIST', root), patch.object(downloader, 'PHOTO_DIR', photo_dir), patch.object(downloader, 'MANIFEST_PATH', manifest_path), patch.object(downloader, 'PLACES', [{'id':'t9','name':'Mugiwara Store','area':'Tokyo'}]), patch.object(downloader, 'FORCE_MISSING_REFRESH', False), patch.object(downloader, 'search_images', side_effect=AssertionError('cooldown should skip Commons')):
+            manifest_path.write_text(__import__('json').dumps({'t1':[], '_meta':{'lastAttempt':{'t1':now}}}), encoding='utf-8')
+            with patch.object(downloader, 'DIST', root), patch.object(downloader, 'PHOTO_DIR', photo_dir), patch.object(downloader, 'MANIFEST_PATH', manifest_path), patch.object(downloader, 'PLACES', [{'id':'t1','name':'Senso-ji Temple','area':'Tokyo'}]), patch.object(downloader, 'FORCE_MISSING_REFRESH', False), patch.object(downloader, 'search_images', side_effect=AssertionError('cooldown should skip Commons')):
                 result = downloader.build()
             self.assertEqual(result, 0)
             data = __import__('json').loads(manifest_path.read_text(encoding='utf-8'))
-            self.assertEqual(data['t9'], [])
+            self.assertEqual(data['t1'], [])
 
 if __name__ == '__main__':
     unittest.main()
