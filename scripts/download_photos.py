@@ -27,14 +27,13 @@ MANIFEST_PATH = PHOTO_DIR / 'manifest.json'
 CURATED_FILE_TITLES = {
  't7': ['File:Tokyo Tower close up 1.jpg', 'File:Tokyo Tower close up 2.jpg', 'File:Tokyo tower.jpg'],
  't8': ['File:The iconic Godzilla in Shinjuku area, Tokyo, Japan.jpg', 'File:Godzilla in Shinjuku (53416845058).jpg', 'File:The iconic Godzilla in Shinjuku area, Tokyo, Japan1.jpg'],
+ 't9': ['File:Magnet by Shibuya 109 in Shibuya Crossing in Tokyo, 2019 - 784.jpg', 'File:MAGNET by SHIBUYA109 Shibuya Crossing (49997446076).jpg', 'File:MAGNET by SHIBUYA109 (49997450386).jpg'],
  't10': ['File:Suga Shrine staircase, 9 December 2024.jpg', 'File:Suga Shrine stairs low-angle 20161113-071158.jpg', 'File:Suga Shrine stairs high-angle 20161113-070754.jpg'],
 }
-# Wikimedia Commons currently has a One Piece Mugiwara Store photo from Taipei,
-# not the user's target Shibuya PARCO store. Do NOT mislabel that image or retry it
-# on every build. Revisit only after a verified Shibuya-specific reusable source exists.
-KNOWN_NO_VERIFIED_MATCH = {
- 't9': 'No verified reusable photo for the Shibuya PARCO branch found; refusing to use the unrelated Taiwan store photo.'
-}
+# Do not use the Taiwan store photo for the Tokyo destination. We instead use verified,
+# openly licensed photographs of the correct MAGNET by SHIBUYA109 building/exterior context.
+# These are explicitly location-reference photos, not claimed to be store-interior images.
+KNOWN_NO_VERIFIED_MATCH = {}
 
 QUERY_VARIANTS = {
  't1':['Sensō-ji temple Asakusa Tokyo'], 't2':['Kaminarimon Thunder Gate Asakusa Tokyo'],
@@ -203,6 +202,9 @@ def build() -> int:
     print(f'FORCE_MISSING_PHOTO_REFRESH={FORCE_MISSING_REFRESH}')
     previous, old_meta = load_previous()
     meta = dict(old_meta)
+    version_file = ROOT / 'scripts' / 'photo-cache-version.txt'
+    curation_version = version_file.read_text(encoding='utf-8').strip() if version_file.exists() else '1'
+    previous_curation_version = str(meta.get('curationVersion') or '')
     last_attempt = dict(meta.get('lastAttempt') or {})
     manifest = {}
     forced_ids = []
@@ -215,9 +217,10 @@ def build() -> int:
         # For curated destinations, invalidate any previous bundle whose filenames do not
         # match the reviewed allowlist; this corrects the earlier Tokyo Tower mismatches.
         allowed = {x.removeprefix('File:').casefold() for x in CURATED_FILE_TITLES.get(pid, [])}
-        needs_recuration = bool(allowed and valid and any(str(item.get('title','')).casefold() not in allowed for item in valid))
+        needs_recuration = bool(allowed and valid and (previous_curation_version != curation_version or any(str(item.get('title','')).casefold() not in allowed for item in valid)))
         if needs_recuration:
-            print(f'RECURATE {pid}: replacing previously unverified image selection')
+            reason = 'curation version changed' if previous_curation_version != curation_version else 'cached titles are outside the reviewed allowlist'
+            print(f'RECURATE {pid}: {reason}; replacing cached selection')
             valid = []
         if pid in KNOWN_NO_VERIFIED_MATCH:
             manifest[pid] = []
@@ -276,7 +279,7 @@ def build() -> int:
         meta['lastAttempt'] = last_attempt
         write_manifest(manifest | {k:v for k,v in previous.items() if k not in manifest and k != '_meta'}, meta)
     meta['lastAttempt'] = last_attempt
-    meta['curationVersion'] = (ROOT / 'scripts' / 'photo-cache-version.txt').read_text().strip() if (ROOT / 'scripts' / 'photo-cache-version.txt').exists() else '1'
+    meta['curationVersion'] = curation_version
     write_manifest(manifest, meta)
     total = sum(len(v) for k,v in manifest.items() if k != '_meta' and isinstance(v,list))
     missing = [p['id'] for p in PLACES if not manifest.get(p['id'])]
