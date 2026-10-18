@@ -153,6 +153,7 @@ def write_manifest(manifest: dict, meta: dict) -> None:
     MANIFEST_PATH.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
 
 def build() -> int:
+    print(f'FORCE_MISSING_PHOTO_REFRESH={FORCE_MISSING_REFRESH}')
     previous, old_meta = load_previous()
     meta = dict(old_meta)
     last_attempt = dict(meta.get('lastAttempt') or {})
