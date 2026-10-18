@@ -237,6 +237,35 @@ body{background-image:radial-gradient(ellipse at 15% 0%,rgba(220,233,227,.42),tr
 
 </style>
 
+
+<style id="atlas-phase5-visible-redesign">
+/* Phase 5: a visible structural redesign, not just minor colour tweaks. */
+:root{--atlas-ink:#19323d;--atlas-red:#c84f3b;--atlas-paper:#f7f8f6;--atlas-white:#ffffff;--atlas-line:#e4e9e5;--atlas-shadow:0 14px 38px rgba(25,50,61,.075)}
+html,body{background:#f7f8f6!important}
+.topbar{min-height:76px!important;padding:13px clamp(15px,3.5vw,42px)!important;border-bottom:1px solid #e1e7e3!important;box-shadow:0 7px 24px rgba(20,43,50,.045)!important}
+.brand-mark{border-radius:13px!important;box-shadow:none!important}
+.shell{grid-template-columns:258px minmax(0,1fr)!important}
+.sidebar{padding:22px 15px!important;background:#fbfcfa!important}
+.nav{min-height:44px!important;font-size:12px!important;border:1px solid transparent!important}
+.nav.active{background:#e8f0eb!important;border-color:#dce7df!important;box-shadow:inset 3px 0 #c84f3b!important}
+.main{max-width:1680px!important;padding:clamp(18px,2.8vw,38px)!important}
+.page-head{margin-bottom:22px!important}
+.page-head h1{font-size:clamp(30px,3.4vw,46px)!important;letter-spacing:-.055em!important}
+.atlas-route-hero{display:grid;grid-template-columns:minmax(0,1.03fr) minmax(360px,1fr);gap:26px;align-items:center;margin:4px 0 22px;padding:clamp(22px,3vw,36px);border:1px solid #e0e7e1;border-radius:26px;background:linear-gradient(115deg,#fff 0%,#fbfdfb 58%,#edf4ef 100%);box-shadow:0 18px 48px rgba(25,50,61,.065);overflow:hidden;position:relative}
+.atlas-route-hero:after{content:"日 本";position:absolute;right:-8px;top:-36px;font-size:clamp(100px,15vw,210px);font-weight:900;letter-spacing:-.12em;color:rgba(79,126,102,.045);pointer-events:none;white-space:nowrap}
+.atlas-route-hero-copy,.atlas-route-track{position:relative;z-index:1}.atlas-route-kicker{display:flex;align-items:center;gap:8px;font-size:9px;font-weight:850;letter-spacing:.14em;color:#71827b;flex-wrap:wrap}.atlas-live-dot{width:7px;height:7px;border-radius:50%;background:#5f9b79;box-shadow:0 0 0 4px #e4f0e8}.atlas-route-separator{color:#c84f3b}.atlas-route-hero h2{font-size:clamp(28px,3.4vw,43px);line-height:1.02;letter-spacing:-.06em;color:#19323d;margin:17px 0 11px;font-weight:820}.atlas-route-hero-copy p{font-size:13px;line-height:1.75;color:#708079;max-width:500px;margin:0}.atlas-route-actions{display:flex;gap:9px;flex-wrap:wrap;margin-top:21px}.atlas-route-button{display:inline-flex;align-items:center;justify-content:center;gap:14px;padding:11px 15px;border:1px solid #dfe7e1;border-radius:12px;background:#fff;color:#263f47;font-size:11px;font-weight:800;cursor:pointer}.atlas-route-button-dark{background:#19323d;color:#fff;border-color:#19323d}.atlas-route-button span{font-size:15px}.atlas-route-track{border:1px solid #e1e9e2;border-radius:19px;background:rgba(255,255,255,.88);padding:18px 17px 14px;min-width:0}.atlas-route-track-head,.atlas-route-foot{display:flex;justify-content:space-between;align-items:center;gap:12px;color:#8a9991;font-size:8px;font-weight:850;letter-spacing:.12em}.atlas-route-track-head span:last-child{padding:5px 8px;background:#f0f5f1;border-radius:999px;color:#5d7c69;letter-spacing:.06em}.atlas-route-stops{display:flex;align-items:flex-start;gap:7px;margin:22px 0 20px}.atlas-route-stop{display:flex;flex-direction:column;align-items:center;text-align:center;gap:5px;min-width:0;flex:1}.atlas-route-stop-dot{width:37px;height:37px;border-radius:13px;display:grid;place-items:center;font-size:17px;font-weight:900;color:#fff;box-shadow:0 5px 12px #1a34400c}.tokyo-dot{background:#cf5c48}.fuji-dot{background:#7896a2}.kyoto-dot{background:#5d8c75}.osaka-dot{background:#c29a58}.atlas-route-stop strong{font-size:10px;color:#2a4248;white-space:nowrap}.atlas-route-stop small{font-size:8px;color:#93a09a;white-space:nowrap}.atlas-route-line{height:1px;background:#d8e3db;flex:0 0 13px;margin-top:18px}.atlas-route-foot{border-top:1px solid #edf0ec;padding-top:12px;letter-spacing:0;font-weight:650;font-size:9px}.atlas-route-foot span:first-child{color:#5c9272}
+.notice{border:1px solid #ead9bb!important;background:#fff9ed!important;color:#735b36!important;padding:13px 16px!important;border-radius:14px!important}
+.stats{gap:14px!important;margin-bottom:20px!important}.stat{padding:20px!important;min-height:116px;border-radius:19px!important;box-shadow:0 7px 22px rgba(25,50,61,.035)!important}.stat-label{font-size:10px!important;letter-spacing:.035em!important}.stat-value{font-size:clamp(25px,2.3vw,33px)!important}.stat-note{font-size:10px!important;line-height:1.5!important}
+.card,.day-card,.decision-card,.table-wrap{border-radius:20px!important;box-shadow:0 8px 28px rgba(25,50,61,.045)!important}.card-head{padding:19px 21px!important}.card-body{padding:20px 21px!important}.card-title{font-size:14px!important;font-weight:820!important}.card-sub{font-size:11px!important;line-height:1.6!important}
+.map-wrap{min-height:440px!important}.map-card .map-toolbar{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}.map-legend{padding:12px 16px!important;gap:12px!important;flex-wrap:wrap}
+.place-hero{min-height:145px!important;padding:23px!important}.place-hero .hero-emoji{width:58px;height:58px;border-radius:17px;display:grid;place-items:center;background:#f1f5f0;font-size:34px!important}.place-details{padding:20px!important}.detail-line{padding:7px 0!important}
+.day-card{overflow:hidden!important}.day-banner{padding:20px 22px!important;background:linear-gradient(110deg,#eef4ef,#fafbf9)!important}.day-number{font-size:9px!important;letter-spacing:.15em!important}.day-title{font-size:20px!important;letter-spacing:-.04em!important}.timeline-item{padding-bottom:17px!important}.timeline-item:before{box-shadow:0 0 0 5px #edf3ee!important}.timeline-item .place-name{font-size:13px!important}.atlas-day-load{margin:12px 0!important;padding:9px 11px;background:#f7f9f6;border:1px solid #e8eee8;border-radius:10px}
+.budget-row{padding:9px 0!important;border-bottom:1px solid #edf0ec!important}.budget-row input{background:#fff!important;color:#203a44!important;border:1px solid #e1e8e2!important;border-radius:10px!important;padding:11px!important}.field label{font-size:10px!important;letter-spacing:.04em!important;text-transform:uppercase;color:#84938a!important}
+@media(max-width:900px){.atlas-route-hero{grid-template-columns:1fr;gap:20px}.atlas-route-track{max-width:none}.atlas-route-hero:after{font-size:130px;top:auto;bottom:-20px}.shell{grid-template-columns:220px minmax(0,1fr)!important}}
+@media(max-width:720px){.main{padding:14px 12px calc(106px + env(safe-area-inset-bottom))!important}.page-head h1{font-size:29px!important}.atlas-route-hero{margin:2px 0 16px;padding:19px 16px;border-radius:21px;gap:18px}.atlas-route-kicker{font-size:8px;letter-spacing:.08em}.atlas-route-hero h2{font-size:30px;margin:13px 0 9px}.atlas-route-hero-copy p{font-size:12px;line-height:1.65}.atlas-route-actions{margin-top:16px}.atlas-route-button{padding:10px 12px;gap:9px}.atlas-route-track{padding:14px 10px 12px;border-radius:15px}.atlas-route-stops{gap:3px;margin:17px 0 15px}.atlas-route-stop-dot{width:32px;height:32px;border-radius:10px;font-size:14px}.atlas-route-stop strong{font-size:8px;white-space:normal;line-height:1.2}.atlas-route-stop small{font-size:7px;white-space:normal}.atlas-route-line{flex-basis:7px;margin-top:15px}.atlas-route-foot{font-size:8px;letter-spacing:0;align-items:flex-start}.stats{gap:9px!important}.stat{min-height:104px;padding:13px!important;border-radius:15px!important}.stat-value{font-size:23px!important}.card-head{padding:15px!important}.card-body{padding:15px!important}.map-wrap{min-height:clamp(430px,64svh,620px)!important}.place-hero{padding:16px!important;min-height:115px!important}.place-details{padding:15px!important}}
+@media(max-width:370px){.atlas-route-stop-dot{width:29px;height:29px}.atlas-route-stop strong{font-size:7px}.atlas-route-line{flex-basis:4px}.atlas-route-foot{gap:6px}.atlas-route-kicker{font-size:7px}}
+</style>
+
 </head>
 <body>
 <div class="app">
@@ -265,6 +294,19 @@ body{background-image:radial-gradient(ellipse at 15% 0%,rgba(220,233,227,.42),tr
 <main class="main">
 <section class="section active" id="page-overview">
  <div class="page-head"><div><div class="eyebrow">Your Japan trip, in one place</div><h1>Plan with clarity. Travel with confidence.</h1><div class="subtitle">An editable planning workspace for your tentative late-January 2027 trip. Map, itinerary, decisions and budget stay connected. Nothing here books tickets or confirms availability.</div></div><div class="head-actions"><button class="btn" id="jumpMap">Explore map ↗</button><button class="btn primary" id="continuePlan">Continue planning →</button></div></div>
+ <section class="atlas-route-hero" aria-label="Trip route overview">
+  <div class="atlas-route-hero-copy">
+   <div class="atlas-route-kicker"><span class="atlas-live-dot"></span> YOUR TRIP WORKSPACE <span class="atlas-route-separator">/</span> JANUARY 2027 · TENTATIVE</div>
+   <h2>Japan, thoughtfully planned.</h2>
+   <p>One connected plan for places, days, budget and trip readiness — designed to keep the trip realistic, not overloaded.</p>
+   <div class="atlas-route-actions"><button class="atlas-route-button atlas-route-button-dark" data-goto="itinerary">Shape the 7 days <span>↗</span></button><button class="atlas-route-button" data-goto="map">Explore the atlas <span>⌖</span></button></div>
+  </div>
+  <div class="atlas-route-track" aria-label="Planned regions">
+   <div class="atlas-route-track-head"><span>ROUTE AT A GLANCE</span><span>4 REGIONS</span></div>
+   <div class="atlas-route-stops"><div class="atlas-route-stop"><span class="atlas-route-stop-dot tokyo-dot">東</span><strong>Tokyo</strong><small>City + anime</small></div><div class="atlas-route-line"></div><div class="atlas-route-stop"><span class="atlas-route-stop-dot fuji-dot">富</span><strong>Fuji / Hakone</strong><small>Choose one</small></div><div class="atlas-route-line"></div><div class="atlas-route-stop"><span class="atlas-route-stop-dot kyoto-dot">京</span><strong>Kyoto</strong><small>Temples + lanes</small></div><div class="atlas-route-line"></div><div class="atlas-route-stop"><span class="atlas-route-stop-dot osaka-dot">大</span><strong>Osaka</strong><small>Castle + Dotonbori</small></div></div>
+   <div class="atlas-route-foot"><span>● Core route</span><span>Fuji visibility is weather-dependent</span></div>
+  </div>
+ </section>
  <div class="notice"><strong>Decision alert:</strong> Mount Fuji is a priority, but the route is still undecided: choose <strong>Lake Kawaguchiko or Hakone</strong>. Seven days is tight for the current Kyoto/Osaka list; use the day planner to resolve conflicts before booking.</div>
  <div class="grid stats">
   <div class="stat"><div class="stat-top"><div><div class="stat-label">Places in register</div><div class="stat-value" id="statPlaces">0</div></div><div class="stat-icon">⌖</div></div><div class="stat-note" id="statCore">Confirmed core stops</div></div>
