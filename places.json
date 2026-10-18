@@ -1,0 +1,177 @@
+[
+  {
+    "id": "t1",
+    "name": "Senso-ji Temple",
+    "area": "Tokyo"
+  },
+  {
+    "id": "t2",
+    "name": "Kaminarimon Gate",
+    "area": "Tokyo"
+  },
+  {
+    "id": "t3",
+    "name": "Nakamise Shopping Street",
+    "area": "Tokyo"
+  },
+  {
+    "id": "t4",
+    "name": "Meiji Jingu",
+    "area": "Tokyo"
+  },
+  {
+    "id": "t5",
+    "name": "Shibuya Crossing",
+    "area": "Tokyo"
+  },
+  {
+    "id": "t6",
+    "name": "Hachiko Memorial Statue",
+    "area": "Tokyo"
+  },
+  {
+    "id": "t7",
+    "name": "Tokyo Tower",
+    "area": "Tokyo"
+  },
+  {
+    "id": "t8",
+    "name": "Godzilla Head, Shinjuku",
+    "area": "Tokyo"
+  },
+  {
+    "id": "t9",
+    "name": "ONE PIECE Mugiwara Store",
+    "area": "Tokyo"
+  },
+  {
+    "id": "t10",
+    "name": "Suga Shrine Stairs (Your Name)",
+    "area": "Tokyo"
+  },
+  {
+    "id": "t11",
+    "name": "Warner Bros. Studio Tour Tokyo – The Making of Harry Potter",
+    "area": "Tokyo"
+  },
+  {
+    "id": "f1",
+    "name": "Lake Kawaguchiko",
+    "area": "Fuji / Hakone"
+  },
+  {
+    "id": "f2",
+    "name": "Lake Ashi / Motohakone",
+    "area": "Fuji / Hakone"
+  },
+  {
+    "id": "f3",
+    "name": "Hakone Shrine",
+    "area": "Fuji / Hakone"
+  },
+  {
+    "id": "k1",
+    "name": "Fushimi Inari Taisha",
+    "area": "Kyoto"
+  },
+  {
+    "id": "k2",
+    "name": "Kiyomizu-dera",
+    "area": "Kyoto"
+  },
+  {
+    "id": "k3",
+    "name": "Ninenzaka",
+    "area": "Kyoto"
+  },
+  {
+    "id": "k4",
+    "name": "Sannenzaka",
+    "area": "Kyoto"
+  },
+  {
+    "id": "k5",
+    "name": "Yasaka Pagoda (Hokan-ji)",
+    "area": "Kyoto"
+  },
+  {
+    "id": "k6",
+    "name": "Gion",
+    "area": "Kyoto"
+  },
+  {
+    "id": "k7",
+    "name": "Yasaka Shrine",
+    "area": "Kyoto"
+  },
+  {
+    "id": "k8",
+    "name": "Arashiyama Bamboo Grove",
+    "area": "Kyoto"
+  },
+  {
+    "id": "k9",
+    "name": "Togetsukyo Bridge",
+    "area": "Kyoto"
+  },
+  {
+    "id": "k10",
+    "name": "Kinkaku-ji (Golden Pavilion)",
+    "area": "Kyoto"
+  },
+  {
+    "id": "k11",
+    "name": "Nishiki Market",
+    "area": "Kyoto"
+  },
+  {
+    "id": "o1",
+    "name": "Osaka Castle Park / Exterior",
+    "area": "Osaka"
+  },
+  {
+    "id": "o2",
+    "name": "Hokoku Shrine",
+    "area": "Osaka"
+  },
+  {
+    "id": "o3",
+    "name": "Dotonbori",
+    "area": "Osaka"
+  },
+  {
+    "id": "x1",
+    "name": "Shibuya Sky",
+    "area": "Optional"
+  },
+  {
+    "id": "x2",
+    "name": "Maruyama Park",
+    "area": "Optional"
+  },
+  {
+    "id": "x3",
+    "name": "Shinsaibashi-suji Shopping Street",
+    "area": "Optional"
+  },
+  {
+    "id": "x4",
+    "name": "Harajuku / Takeshita Street",
+    "area": "Optional"
+  },
+  {
+    "id": "x5",
+    "name": "Namba Yasaka Shrine",
+    "area": "Optional"
+  },
+  {
+    "id": "x6",
+    "name": "Nijo Castle",
+    "area": "Optional"
+  },
+  {
+    "id": "x7",
+    "name": "Pontocho Alley",
+    "area": "Optional"
+  }
+]
