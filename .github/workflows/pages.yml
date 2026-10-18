@@ -1,8 +1,16 @@
 name: Build and deploy Japan Atlas Pro
+
 on:
   push:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      retry_missing_photos:
+        description: 'Retry destinations without bundled photos'
+        required: false
+        type: boolean
+        default: false
+
 permissions:
   contents: read
   pages: write
