@@ -21,6 +21,21 @@ COOLDOWN_SECONDS = 7 * 24 * 60 * 60
 FORCE_MISSING_REFRESH = os.environ.get('FORCE_MISSING_PHOTO_REFRESH', '').lower() in ('1','true','yes','on')
 MANIFEST_PATH = PHOTO_DIR / 'manifest.json'
 
+# Manually verified Wikimedia Commons file pages for destinations where broad search
+# previously selected unrelated results or returned empty results. Exact file titles
+# are resolved through the Commons API and their attribution/licence metadata is kept.
+CURATED_FILE_TITLES = {
+ 't7': ['File:Tokyo Tower close up 1.jpg', 'File:Tokyo Tower close up 2.jpg', 'File:Tokyo tower.jpg'],
+ 't8': ['File:The iconic Godzilla in Shinjuku area, Tokyo, Japan.jpg', 'File:Godzilla in Shinjuku (53416845058).jpg', 'File:The iconic Godzilla in Shinjuku area, Tokyo, Japan1.jpg'],
+ 't10': ['File:Suga Shrine staircase, 9 December 2024.jpg', 'File:Suga Shrine stairs low-angle 20161113-071158.jpg', 'File:Suga Shrine stairs high-angle 20161113-070754.jpg'],
+}
+# Wikimedia Commons currently has a One Piece Mugiwara Store photo from Taipei,
+# not the user's target Shibuya PARCO store. Do NOT mislabel that image or retry it
+# on every build. Revisit only after a verified Shibuya-specific reusable source exists.
+KNOWN_NO_VERIFIED_MATCH = {
+ 't9': 'No verified reusable photo for the Shibuya PARCO branch found; refusing to use the unrelated Taiwan store photo.'
+}
+
 QUERY_VARIANTS = {
  't1':['Sensō-ji temple Asakusa Tokyo'], 't2':['Kaminarimon Thunder Gate Asakusa Tokyo'],
  't3':['Nakamise shopping street Asakusa Tokyo'], 't4':['Meiji Jingu shrine Tokyo'],
@@ -97,6 +112,36 @@ def load_previous() -> tuple[dict, dict]:
     meta = raw.get('_meta') if isinstance(raw.get('_meta'), dict) else {}
     return raw, meta
 
+def search_curated_images(place: dict) -> list[dict]:
+    titles = CURATED_FILE_TITLES.get(place['id'], [])
+    if not titles:
+        return []
+    params = {'action':'query', 'titles':'|'.join(titles), 'prop':'imageinfo',
+              'iiprop':'url|extmetadata', 'iiurlwidth':1000, 'format':'json'}
+    url = 'https://commons.wikimedia.org/w/api.php?' + urllib.parse.urlencode(params)
+    data = get_json(url)
+    pages = data.get('query', {}).get('pages', {})
+    by_title = {str(v.get('title','')).casefold(): v for v in pages.values()}
+    picked = []
+    for requested in titles:
+        page = by_title.get(requested.casefold())
+        if not page or 'missing' in page:
+            print(f"WARN curated Commons file not found for {place['id']}: {requested}")
+            continue
+        ii = (page.get('imageinfo') or [{}])[0]
+        thumb, source = ii.get('thumburl'), ii.get('descriptionurl')
+        if not thumb or not source or not thumb.lower().split('?')[0].endswith(('.jpg','.jpeg','.png','.webp')):
+            print(f"WARN curated Commons file has no usable image URL for {place['id']}: {requested}")
+            continue
+        ext = ii.get('extmetadata') or {}
+        title = str(page.get('title', requested)).replace('File:','').replace('_',' ')
+        description = clean_html((ext.get('ImageDescription') or {}).get('value',''))
+        picked.append({'title':title, 'url':thumb, 'source':source,
+            'author':clean_html((ext.get('Artist') or {}).get('value','Unknown author')),
+            'license':clean_html((ext.get('LicenseShortName') or {}).get('value','See source page')),
+            'licenseUrl':(ext.get('LicenseUrl') or {}).get('value',''), 'description':description})
+    return picked
+
 def search_images(place: dict) -> list[dict]:
     for query in queries_for(place):
         params = {'action':'query','generator':'search','gsrsearch':'filetype:bitmap ' + query,
@@ -122,6 +167,8 @@ def search_images(place: dict) -> list[dict]:
             description = clean_html((ext.get('ImageDescription') or {}).get('value',''))
             text = (title + ' ' + description).lower()
             score = sum(1 for word in wanted if word in text)
+            if score < 1:
+                continue
             results.append((score, {'title':title,'url':url_thumb,'source':source,
                 'author':clean_html((ext.get('Artist') or {}).get('value','Unknown author')),
                 'license':clean_html((ext.get('LicenseShortName') or {}).get('value','See source page')),
@@ -165,6 +212,20 @@ def build() -> int:
         pid = place['id']
         old_items = previous.get(pid, [])
         valid = [item for item in old_items if isinstance(item, dict) and local_asset_exists(item)] if isinstance(old_items, list) else []
+        # For curated destinations, invalidate any previous bundle whose filenames do not
+        # match the reviewed allowlist; this corrects the earlier Tokyo Tower mismatches.
+        allowed = {x.removeprefix('File:').casefold() for x in CURATED_FILE_TITLES.get(pid, [])}
+        needs_recuration = bool(allowed and valid and any(str(item.get('title','')).casefold() not in allowed for item in valid))
+        if needs_recuration:
+            print(f'RECURATE {pid}: replacing previously unverified image selection')
+            valid = []
+        if pid in KNOWN_NO_VERIFIED_MATCH:
+            manifest[pid] = []
+            print(f"SKIP {pid}: {KNOWN_NO_VERIFIED_MATCH[pid]}")
+            last_attempt[pid] = now_iso()
+            meta['lastAttempt'] = last_attempt
+            write_manifest(manifest | {k:v for k,v in previous.items() if k not in manifest and k != '_meta'}, meta)
+            continue
         if valid:
             manifest[pid] = valid
             skipped_cached += len(valid)
@@ -172,7 +233,7 @@ def build() -> int:
             continue
         attempted = last_attempt.get(pid)
         recent = False
-        if attempted and not FORCE_MISSING_REFRESH:
+        if attempted and not FORCE_MISSING_REFRESH and pid not in CURATED_FILE_TITLES:
             try:
                 dt = datetime.fromisoformat(attempted.replace('Z','+00:00'))
                 recent = (datetime.now(timezone.utc)-dt).total_seconds() < COOLDOWN_SECONDS
@@ -186,7 +247,14 @@ def build() -> int:
         if FORCE_MISSING_REFRESH:
             forced_ids.append(pid)
         print(f'SEARCH {pid}: looking for missing bundled photos')
-        picked = search_images(place)
+        if pid in CURATED_FILE_TITLES:
+            try:
+                picked = search_curated_images(place)
+            except Exception as e:
+                print(f"WARN curated Commons lookup failed for {pid}: {e}")
+                picked = []
+        else:
+            picked = search_images(place)
         saved = []
         for j, item in enumerate(picked, 1):
             ext = '.webp' if '.webp' in item['url'].lower() else '.png' if '.png' in item['url'].lower() else '.jpg'
@@ -216,7 +284,13 @@ def build() -> int:
     print(f'Reused cached photos: {skipped_cached}; destination searches this run: {queried}; missing bundles: {len(missing)}')
     if missing:
         print('Missing bundle IDs:', ', '.join(missing))
-        print('To retry missing destinations, run the workflow manually with retry_missing_photos enabled.')
+        retryable = [pid for pid in missing if pid not in KNOWN_NO_VERIFIED_MATCH]
+        if retryable:
+            print('Retryable missing IDs:', ', '.join(retryable))
+            print('To retry these only, run the workflow manually with retry_missing_photos enabled.')
+        for pid in missing:
+            if pid in KNOWN_NO_VERIFIED_MATCH:
+                print(f'No automatic retry scheduled for {pid}: {KNOWN_NO_VERIFIED_MATCH[pid]}')
     return 0
 
 if __name__ == '__main__':
