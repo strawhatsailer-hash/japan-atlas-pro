@@ -55,6 +55,11 @@
     "area": "Tokyo"
   },
   {
+    "id": "f0",
+    "name": "Mount Fuji (landmark pin)",
+    "area": "Fuji / Hakone"
+  },
+  {
     "id": "f1",
     "name": "Lake Kawaguchiko",
     "area": "Fuji / Hakone"
