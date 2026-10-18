@@ -22,6 +22,33 @@ class PhotoBundlerTests(unittest.TestCase):
         self.assertIn('麦わらストア', queries[0])
         self.assertTrue(any('Mugiwara Store' in q for q in queries))
 
+    def test_curated_photos_are_explicitly_allowlisted(self):
+        self.assertIn('File:Godzilla in Shinjuku (53416845058).jpg', downloader.CURATED_FILE_TITLES['t8'])
+        self.assertIn('File:Suga Shrine staircase, 9 December 2024.jpg', downloader.CURATED_FILE_TITLES['t10'])
+        self.assertIn('File:Tokyo Tower close up 1.jpg', downloader.CURATED_FILE_TITLES['t7'])
+
+    def test_curated_lookup_uses_verified_file_titles_and_keeps_licence_metadata(self):
+        titles = downloader.CURATED_FILE_TITLES['t10']
+        pages = {}
+        for i, title in enumerate(titles, 1):
+            pages[str(i)] = {
+                'title': title,
+                'imageinfo': [{'thumburl': f'https://upload.wikimedia.org/test/{i}.jpg',
+                    'descriptionurl': 'https://commons.wikimedia.org/wiki/' + title.replace(' ', '_'),
+                    'extmetadata': {'Artist': {'value': 'Verified photographer'},
+                                    'LicenseShortName': {'value': 'CC BY-SA 4.0'},
+                                    'LicenseUrl': {'value': 'https://creativecommons.org/licenses/by-sa/4.0/'},
+                                    'ImageDescription': {'value': 'Suga Shrine staircase'}}}]
+            }
+        with patch.object(downloader, 'get_json', return_value={'query': {'pages': pages}}):
+            images = downloader.search_curated_images({'id':'t10'})
+        self.assertEqual([x['title'] for x in images], [x.removeprefix('File:') for x in titles])
+        self.assertTrue(all(x['license'] == 'CC BY-SA 4.0' for x in images))
+
+    def test_mugiwara_is_not_substituted_with_unrelated_branch(self):
+        self.assertIn('t9', downloader.KNOWN_NO_VERIFIED_MATCH)
+        self.assertIn('Taiwan', downloader.KNOWN_NO_VERIFIED_MATCH['t9'])
+
     def test_cached_local_asset_is_reused(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
