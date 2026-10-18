@@ -16,3 +16,6 @@ Data privacy: this is a static public website. Avoid storing private personal da
 Recent UX update: the primary map style is OpenFreeMap Liberty (more colourful than Positron). The Atlas has a Map style toggle to switch between Colour and Soft styles. Destination markers use city colours and category emoji. The route builder defaults to two different places when both selectors were initially identical.
 
 Important: live vector tiles require internet. This package does not include offline street-map tiles.
+
+
+UX refresh: selected-place inspector now loads a horizontal gallery of multiple reference photos from Wikimedia Commons when online. Each photo links to its Commons source page for attribution/licence details. Image results depend on Commons search availability and should be visually checked before relying on a specific image. The nearby places list shows a thumbnail when photos have loaded. The app remains usable if photo search is unavailable.
