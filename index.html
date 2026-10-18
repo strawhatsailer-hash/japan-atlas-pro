@@ -264,6 +264,35 @@ html,body{background:#f7f8f6!important}
 @media(max-width:900px){.atlas-route-hero{grid-template-columns:1fr;gap:20px}.atlas-route-track{max-width:none}.atlas-route-hero:after{font-size:130px;top:auto;bottom:-20px}.shell{grid-template-columns:220px minmax(0,1fr)!important}}
 @media(max-width:720px){.main{padding:14px 12px calc(106px + env(safe-area-inset-bottom))!important}.page-head h1{font-size:29px!important}.atlas-route-hero{margin:2px 0 16px;padding:19px 16px;border-radius:21px;gap:18px}.atlas-route-kicker{font-size:8px;letter-spacing:.08em}.atlas-route-hero h2{font-size:30px;margin:13px 0 9px}.atlas-route-hero-copy p{font-size:12px;line-height:1.65}.atlas-route-actions{margin-top:16px}.atlas-route-button{padding:10px 12px;gap:9px}.atlas-route-track{padding:14px 10px 12px;border-radius:15px}.atlas-route-stops{gap:3px;margin:17px 0 15px}.atlas-route-stop-dot{width:32px;height:32px;border-radius:10px;font-size:14px}.atlas-route-stop strong{font-size:8px;white-space:normal;line-height:1.2}.atlas-route-stop small{font-size:7px;white-space:normal}.atlas-route-line{flex-basis:7px;margin-top:15px}.atlas-route-foot{font-size:8px;letter-spacing:0;align-items:flex-start}.stats{gap:9px!important}.stat{min-height:104px;padding:13px!important;border-radius:15px!important}.stat-value{font-size:23px!important}.card-head{padding:15px!important}.card-body{padding:15px!important}.map-wrap{min-height:clamp(430px,64svh,620px)!important}.place-hero{padding:16px!important;min-height:115px!important}.place-details{padding:15px!important}}
 @media(max-width:370px){.atlas-route-stop-dot{width:29px;height:29px}.atlas-route-stop strong{font-size:7px}.atlas-route-line{flex-basis:4px}.atlas-route-foot{gap:6px}.atlas-route-kicker{font-size:7px}}
+/* Premium gallery finishing pass: image-only thumbnails, consistent crops and aligned mobile details. */
+.atlas-gallery-rail{grid-auto-columns:minmax(118px,22%);gap:11px;padding:2px 2px 8px;scrollbar-width:none}
+.atlas-gallery-rail::-webkit-scrollbar{display:none}
+.atlas-photo-tile{display:block;min-width:0;aspect-ratio:4/3;padding:0;border:1px solid #e5e8e1;border-radius:14px;background:#eef0e9;box-shadow:0 3px 10px rgba(25,50,61,.035)}
+.atlas-photo-tile-image{display:block;width:100%;height:100%;aspect-ratio:4/3;overflow:hidden}
+.atlas-photo-tile-image img{display:block;width:100%;height:100%;object-fit:cover;object-position:center;border-radius:12px}
+.atlas-photo-tile-caption,.photo-card figcaption{display:none!important}
+.atlas-photo-tile:focus-visible,.atlas-gallery-hero:focus-visible{outline:3px solid #c84f3b;outline-offset:3px}
+.atlas-gallery-rail-head{margin-top:20px;margin-bottom:11px}
+.atlas-gallery-foot{margin-top:15px;padding-top:14px}
+.atlas-gallery-empty{border-radius:17px;background:#faf9f5;border-color:#deddd3}
+.atlas-gallery-empty-actions{gap:12px}
+.atlas-text-link{text-decoration:underline;text-underline-offset:3px}
+@media(max-width:720px){
+ #placePhotoGallery.photo-gallery{padding:17px!important;border-radius:18px!important}
+ .atlas-gallery-head{align-items:flex-start;margin-bottom:14px}
+ .atlas-gallery-head .photo-gallery-title{overflow-wrap:anywhere;line-height:1.15}
+ .atlas-gallery-hero{width:100%;height:clamp(220px,62vw,330px);min-height:220px}
+ .atlas-gallery-rail{grid-auto-columns:minmax(112px,31%);gap:9px}
+ .atlas-photo-tile{border-radius:12px}
+ .atlas-photo-tile-image img{border-radius:11px}
+ .atlas-gallery-foot{align-items:center;gap:8px}
+ .atlas-gallery-foot>span{max-width:none;min-width:0}
+ .atlas-credit-button{flex:0 0 auto}
+ .place-details{overflow-wrap:anywhere}
+ .detail-line{grid-template-columns:minmax(74px,27%) minmax(0,1fr)!important;gap:8px!important}
+ .mobile-nav{padding-bottom:calc(8px + env(safe-area-inset-bottom))!important}
+}
+@media(max-width:390px){.atlas-gallery-rail{grid-auto-columns:minmax(108px,34%);gap:8px}.atlas-gallery-head .photo-gallery-title{font-size:17px!important}.atlas-photo-count{white-space:nowrap}}
 </style>
 
 </head>
@@ -488,7 +517,8 @@ function renderPhotoGallery(p){
  const root=document.getElementById('placePhotoGallery');if(!root)return;
  const imgs=window.__atlasPhotos[p.id]||[];
  if(!imgs.length){
-  root.innerHTML=`<div class="atlas-gallery-empty"><div class="atlas-gallery-empty-mark">✦</div><div class="atlas-gallery-empty-copy"><div class="photo-gallery-title">A closer look at ${esc(p.name)}</div><p>${__photoPending.has(p.id)?'Checking saved photos and the online archive…':'No curated photos are available for this place right now. The rest of your planner still works.'}</p></div><div class="atlas-gallery-empty-actions"><button class="atlas-btn atlas-btn-secondary" type="button" onclick="retryPlacePhotos('${p.id}')">${__photoPending.has(p.id)?'Loading…':'Try again'}</button><a class="atlas-text-link" target="_blank" rel="noopener" href="https://commons.wikimedia.org/wiki/Special:MediaSearch?type=image&search=${encodeURIComponent(photoQueryName(p))}">Browse photo archive ↗</a></div></div>`;
+  const knownNoMatch=p.id==='t9';
+  root.innerHTML=`<div class="atlas-gallery-empty"><div class="atlas-gallery-empty-mark">✦</div><div class="atlas-gallery-empty-copy"><div class="photo-gallery-title">A closer look at ${esc(p.name)}</div><p>${__photoPending.has(p.id)?'Checking saved photos and the online archive…':knownNoMatch?'We haven’t verified a photo of this exact Shibuya PARCO branch yet. We won’t show an unrelated store image.':'No curated photos are available for this place right now. The rest of your planner still works.'}</p></div><div class="atlas-gallery-empty-actions">${knownNoMatch?'':`<button class="atlas-btn atlas-btn-secondary" type="button" onclick="retryPlacePhotos('${p.id}')">${__photoPending.has(p.id)?'Loading…':'Try again'}</button>`}<a class="atlas-text-link" target="_blank" rel="noopener" href="https://commons.wikimedia.org/wiki/Special:MediaSearch?type=image&search=${encodeURIComponent(photoQueryName(p))}">Browse photo archive ↗</a></div></div>`;
   return;
  }
  const safeId=esc(p.id), lead=imgs[0];
@@ -503,7 +533,7 @@ function renderPhotoGallery(p){
    <span class="atlas-gallery-hero-index">01 <i>/</i> ${String(imgs.length).padStart(2,'0')}</span>
   </button>
   <div class="atlas-gallery-rail-head"><span>More perspectives</span><span>Swipe to explore <span aria-hidden="true">→</span></span></div>
-  <div class="atlas-gallery-rail" id="photoTrack-${safeId}">${imgs.map((im,i)=>`<button class="atlas-photo-tile ${i===0?'is-current':''}" type="button" data-photo-index="${i}" aria-label="View photo ${i+1}: ${esc(im.title||p.name)}"><span class="atlas-photo-tile-image"><img src="${esc(im.thumb)}" alt="${esc(im.title||p.name)}" loading="lazy" referrerpolicy="no-referrer"></span><span class="atlas-photo-tile-caption"><strong>${esc(i===0?'Featured view':displayPhotoTitle(im,i,p))}</strong><span>Photo ${String(i+1).padStart(2,'0')}</span></span></button>`).join('')}</div>
+  <div class="atlas-gallery-rail" id="photoTrack-${safeId}" aria-label="More photos of ${esc(p.name)}">${imgs.map((im,i)=>`<button class="atlas-photo-tile ${i===0?'is-current':''}" type="button" data-photo-index="${i}" aria-label="Open photo ${i+1} of ${imgs.length} for ${esc(p.name)}"><span class="atlas-photo-tile-image"><img src="${esc(im.thumb)}" alt="${esc(p.name)} — photo ${i+1}" loading="lazy" referrerpolicy="no-referrer"></span></button>`).join('')}</div>
   <div class="atlas-gallery-foot"><span><span class="atlas-credit-shield">ⓘ</span> Photo credits and licences preserved</span><button type="button" class="atlas-credit-button" data-photo-details="all">Photo details <span aria-hidden="true">↗</span></button></div>`;
  root.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{const tile=img.closest('.atlas-photo-tile');if(tile)tile.classList.add('is-unavailable');else if(img.classList.contains('atlas-gallery-hero-img')){img.style.display='none';const hero=img.closest('.atlas-gallery-hero');if(hero){hero.style.background='linear-gradient(135deg,#e5ebe3,#f2e4db)';const hint=hero.querySelector('.atlas-gallery-hero-hint');if(hint)hint.textContent='Photo unavailable · trying alternate sources…';}if(!__photoPending.has(p.id))loadOnlinePlacePhotos(p,true);}}));
  root.querySelectorAll('[data-photo-index]').forEach(btn=>btn.addEventListener('click',()=>openAtlasPhotoDetails(p,imgs,Number(btn.dataset.photoIndex))));
