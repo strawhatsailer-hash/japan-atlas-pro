@@ -25,6 +25,7 @@ MANIFEST_PATH = PHOTO_DIR / 'manifest.json'
 # previously selected unrelated results or returned empty results. Exact file titles
 # are resolved through the Commons API and their attribution/licence metadata is kept.
 CURATED_FILE_TITLES = {
+ 'f0': ['File:Mount Fuji view from Lake Kawaguchi 2024-12-01.jpg', 'File:Mount Fuji during winter.jpg', 'File:Mount Fuji from Lake Kawaguchi.jpg'],
  't7': ['File:Tokyo Tower close up 1.jpg', 'File:Tokyo Tower close up 2.jpg', 'File:Tokyo tower.jpg'],
  't8': ['File:The iconic Godzilla in Shinjuku area, Tokyo, Japan.jpg', 'File:Godzilla in Shinjuku (53416845058).jpg', 'File:The iconic Godzilla in Shinjuku area, Tokyo, Japan1.jpg'],
  't9': ['File:Magnet by Shibuya 109 in Shibuya Crossing in Tokyo, 2019 - 784.jpg', 'File:MAGNET by SHIBUYA109 Shibuya Crossing (49997446076).jpg', 'File:MAGNET by SHIBUYA109 (49997450386).jpg'],
@@ -42,7 +43,7 @@ QUERY_VARIANTS = {
  't7':['Tokyo Tower Japan'], 't8':['Godzilla Head Hotel Gracery Shinjuku Tokyo','新宿 ゴジラヘッド ホテルグレイスリー'],
  't9':['麦わらストア 渋谷パルコ ワンピース','ONE PIECE Mugiwara Store Shibuya PARCO','ワンピース 麦わらストア 東京'],
  't10':['Suga Shrine stairs Yotsuya Tokyo Your Name','須賀神社 男坂 君の名は 四谷'],
- 't11':['Warner Bros Studio Tour Tokyo Making Harry Potter'], 'f1':['Lake Kawaguchiko Mount Fuji Japan'],
+ 't11':['Warner Bros Studio Tour Tokyo Making Harry Potter'], 'f0':['Mount Fuji winter view Japan','Mount Fuji from Lake Kawaguchi'], 'f1':['Lake Kawaguchiko Mount Fuji Japan'],
  'f2':['Lake Ashi Motohakone Hakone Japan'], 'f3':['Hakone Shrine lake torii Japan'],
  'k1':['Fushimi Inari Taisha red torii Kyoto'], 'k2':['Kiyomizu dera temple Kyoto'],
  'k3':['Ninenzaka street Kyoto'], 'k4':['Sannenzaka street Kyoto'], 'k5':['Yasaka Pagoda Hokanji Kyoto'],
@@ -198,6 +199,15 @@ def write_manifest(manifest: dict, meta: dict) -> None:
     manifest['_meta'] = meta
     MANIFEST_PATH.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
 
+def should_recurate(allowed: set[str], valid: list[dict], previous_version: str, current_version: str, force_refresh: bool) -> bool:
+    """Rebuild curated destinations on an explicit refresh even if old files look valid.
+
+    A cache manifest can claim the current curation version while still containing the
+    old photo selection (for example, after an earlier run stamped metadata before a
+    corrected allowlist was successfully downloaded). Explicit refresh must win.
+    """
+    return bool(allowed and valid and (force_refresh or previous_version != current_version or any(str(item.get('title','')).casefold() not in allowed for item in valid)))
+
 def build() -> int:
     print(f'FORCE_MISSING_PHOTO_REFRESH={FORCE_MISSING_REFRESH}')
     previous, old_meta = load_previous()
@@ -217,9 +227,9 @@ def build() -> int:
         # For curated destinations, invalidate any previous bundle whose filenames do not
         # match the reviewed allowlist; this corrects the earlier Tokyo Tower mismatches.
         allowed = {x.removeprefix('File:').casefold() for x in CURATED_FILE_TITLES.get(pid, [])}
-        needs_recuration = bool(allowed and valid and (previous_curation_version != curation_version or any(str(item.get('title','')).casefold() not in allowed for item in valid)))
+        needs_recuration = should_recurate(allowed, valid, previous_curation_version, curation_version, FORCE_MISSING_REFRESH)
         if needs_recuration:
-            reason = 'curation version changed' if previous_curation_version != curation_version else 'cached titles are outside the reviewed allowlist'
+            reason = ('explicit refresh requested' if FORCE_MISSING_REFRESH else 'curation version changed' if previous_curation_version != curation_version else 'cached titles are outside the reviewed allowlist')
             print(f'RECURATE {pid}: {reason}; replacing cached selection')
             valid = []
         if pid in KNOWN_NO_VERIFIED_MATCH:
