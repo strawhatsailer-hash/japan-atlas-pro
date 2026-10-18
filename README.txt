@@ -1,29 +1,23 @@
-JAPAN ATLAS PRO — PHOTO-BUNDLED GITHUB PAGES DEPLOYMENT
+JAPAN ATLAS PRO — PHOTO REPAIR UPDATE (v3)
 
-What this build does
-- Keeps the interactive MapLibre / OpenFreeMap map (online map tiles still require internet).
-- Adds a GitHub Actions build that downloads up to three reusable, attribution-bearing Wikimedia Commons photos per destination before publishing.
-- The published site serves bundled photos from its own assets folder, so galleries no longer depend on a live Commons search for the normal case.
-- Records source page, author and licence metadata for each downloaded photo. Review attribution/licence terms before republishing beyond this personal planner.
-- If Commons has no suitable result or a download fails, the app can still use its existing online-search fallback.
+WHY THIS UPDATE
+The prior bundle had a curated list for Suga Shrine stairs, but cache reuse did not always invalidate a previously published photo manifest when the curation version changed. This update bumps the photo cache version and makes the downloader re-curate allowlisted destinations when the manifest curation version is stale. It refreshes only curated Tokyo destinations (Tokyo Tower, Godzilla Head, MAGNET location references, and Suga Shrine stairs); the other saved destination bundles are retained. The service worker cache is also bumped so the new UI can load.
 
-IMPORTANT DEPLOYMENT CHANGE
-This package uses GitHub Actions to build the site and bundle images. In your repository, upload/commit the package files including:
-  .github/workflows/pages.yml
-  scripts/download_photos.py
-  places.json
-  index.html
-  sw.js
-  manifest.webmanifest
-  icon.svg
+MUGIWARA STORE
+The official Shibuya main store listing currently places the shop inside MAGNET by SHIBUYA109 on the 6th floor, not Shibuya PARCO. The bundled photos are openly licensed photos of the building/location, not claimed to show the store interior. The UI says this explicitly. No Taiwan-store image is used.
 
-Then open repository Settings > Pages and set Build and deployment > Source to "GitHub Actions" (not "Deploy from a branch"). The workflow runs on pushes to main and can be started manually from Actions.
+FILES TO REPLACE IN YOUR EXISTING GITHUB REPOSITORY
+- index.html
+- sw.js
+- scripts/download_photos.py
+- scripts/photo-cache-version.txt
+- tests/test_download_photos.py (recommended)
 
-On iPhone, GitHub mobile may make hidden files/folders awkward to upload. The easiest reliable option is GitHub's web interface in desktop-site mode or uploading the ZIP from a computer. Make sure .github/workflows/pages.yml is actually present in the repository at that exact path; without it, photo bundling will not run.
+Keep places.json, .github/workflows/pages.yml, manifest.webmanifest, and icon.svg unchanged. Do not upload this folder as a new nested folder; replace the matching files at their existing paths. Commit the changes to main. The changed cache version makes Actions restore the previous bundle and re-curate only the allowlisted destination photo sets.
 
-Image bundle size depends on Commons results. The build downloads up to three 1000px-wide thumbnails per place (35 places), so expect a larger published site than the previous HTML-only version. Images are selected automatically from Commons search, not individually hand-curated; inspect them and their licences if exact visual matching matters.
-
-Privacy and limits
-- This is a public static site. Do not commit private information or API secrets.
-- Planner edits are local to each visitor's browser; they are not synced between people.
-- The photo gallery is bundled by the GitHub-hosted build, but map tiles and Google Maps navigation still need internet. This is not a complete offline street-map package.
+VALIDATION
+- Python unit tests: 9 passed.
+- Python compile: passed.
+- Inline JavaScript syntax: passed (4 blocks).
+- ZIP integrity: checked after creation.
+- This environment cannot run the GitHub Actions network downloader against Wikimedia or visually verify the live iPhone browser. After commit, inspect the build log for RECURATE/SEARCH on t7, t8, t9, and t10 and confirm a non-empty manifest for t10. A green build alone does not prove that every image loaded.
