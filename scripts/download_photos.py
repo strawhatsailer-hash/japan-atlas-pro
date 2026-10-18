@@ -3,7 +3,7 @@
 Downloads up to three relevant, reusable thumbnail images per destination,
 with source, author and licence metadata recorded in the generated manifest.
 """
-import json, os, re, time, urllib.parse, urllib.request
+import json, os, re, time, urllib.parse, urllib.request, urllib.error
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,12 +11,32 @@ DIST = ROOT / 'dist'
 PHOTO_DIR = DIST / 'assets' / 'photos'
 PHOTO_DIR.mkdir(parents=True, exist_ok=True)
 PLACES = json.loads((ROOT / 'places.json').read_text(encoding='utf-8'))
-UA = 'JapanAtlasProPhotoBundler/1.0 (personal travel planner; Wikimedia Commons API)'
+UA = 'JapanAtlasProPhotoBundler/1.1 (personal travel planner; Wikimedia Commons API; contact via GitHub repository)'
 
+# Commons may return HTTP 429 when a build makes many searches quickly.
+# Retry politely, honoring Retry-After and backing off between attempts.
 def get_json(url):
-    req = urllib.request.Request(url, headers={'User-Agent': UA, 'Accept': 'application/json'})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.loads(r.read().decode('utf-8'))
+    for attempt in range(6):
+        req = urllib.request.Request(url, headers={'User-Agent': UA, 'Accept': 'application/json'})
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return json.loads(r.read().decode('utf-8'))
+        except urllib.error.HTTPError as e:
+            if e.code != 429 and e.code not in (500, 502, 503, 504):
+                raise
+            retry_after = e.headers.get('Retry-After')
+            delay = int(retry_after) if retry_after and retry_after.isdigit() else min(15 * (2 ** attempt), 180)
+            if attempt == 5:
+                raise
+            print(f'WARN HTTP {e.code}; retrying Commons search in {delay}s (attempt {attempt + 1}/6)')
+            time.sleep(delay)
+        except (urllib.error.URLError, TimeoutError) as e:
+            if attempt == 5:
+                raise
+            delay = min(5 * (2 ** attempt), 60)
+            print(f'WARN network error; retrying in {delay}s (attempt {attempt + 1}/6): {e}')
+            time.sleep(delay)
+    return {}
 
 def clean_html(value):
     value = re.sub(r'<[^>]+>', '', value or '')
@@ -49,6 +69,8 @@ def search_images(p):
               'gsrnamespace':6,'gsrlimit':16,'prop':'imageinfo','iiprop':'url|extmetadata',
               'iiurlwidth':1000,'format':'json'}
     url = 'https://commons.wikimedia.org/w/api.php?' + urllib.parse.urlencode(params)
+    # Slow the request rate: one Commons search per destination, with a pause.
+    time.sleep(2.0)
     try:
         data = get_json(url)
     except Exception as e:
@@ -103,7 +125,7 @@ for index,p in enumerate(PLACES):
             print(f"OK {pid}: {item['title']}")
         except Exception as e:
             print(f"WARN image download failed for {pid}: {e}")
-        time.sleep(0.15)
+        time.sleep(0.8)
     manifest[pid]=saved
     if not saved: print(f"WARN no bundled photos for {pid}; runtime online search remains as fallback")
 (DIST/'assets'/'photos'/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
