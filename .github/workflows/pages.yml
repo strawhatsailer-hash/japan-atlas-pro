@@ -1,16 +1,14 @@
 name: Build and deploy Japan Atlas Pro
-
 on:
   push:
     branches: [main]
   workflow_dispatch:
     inputs:
       retry_missing_photos:
-        description: 'Retry destinations without bundled photos'
+        description: 'Retry photo searches only for destinations without bundled photos'
         required: false
         type: boolean
         default: false
-
 permissions:
   contents: read
   pages: write
@@ -28,13 +26,35 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+      - name: Test photo bundler helpers
+        run: python -m unittest discover -s tests -v
       - name: Prepare site files
         run: |
           mkdir -p dist
           cp index.html manifest.webmanifest icon.svg sw.js dist/
           cp places.json dist/
-      - name: Download and bundle reusable Wikimedia Commons photos
+      - name: Restore reusable photo bundle cache
+        id: photo-cache-restore
+        uses: actions/cache/restore@v4
+        with:
+          path: dist/assets/photos
+          # Deliberately not the save key: always allow a prefix restore, then save by manifest hash.
+          key: japan-atlas-photo-restore-${{ hashFiles('places.json', 'scripts/photo-cache-version.txt') }}
+          restore-keys: |
+            japan-atlas-photos-${{ hashFiles('places.json', 'scripts/photo-cache-version.txt') }}-
+            japan-atlas-photos-
+      - name: Reuse the already-published bundle if the Actions cache is cold
+        if: steps.photo-cache-restore.outputs.cache-matched-key == ''
+        run: python scripts/seed_published_photos.py
+      - name: Download only missing reusable Wikimedia Commons photos
+        env:
+          FORCE_MISSING_PHOTO_REFRESH: ${{ github.event_name == 'workflow_dispatch' && inputs.retry_missing_photos || false }}
         run: python scripts/download_photos.py
+      - name: Save reusable photo bundle cache
+        uses: actions/cache/save@v4
+        with:
+          path: dist/assets/photos
+          key: japan-atlas-photos-${{ hashFiles('places.json', 'scripts/photo-cache-version.txt') }}-${{ hashFiles('dist/assets/photos/manifest.json') }}
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload Pages artifact
