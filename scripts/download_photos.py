@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
-"""Build-time photo bundler for Japan Atlas Pro using Wikimedia Commons.
-Downloads up to three relevant, reusable thumbnail images per destination,
-with source, author and licence metadata recorded in the generated manifest.
+"""Incremental photo bundler for Japan Atlas Pro.
+
+Existing valid local assets are reused. Only destinations without a usable local
+bundle are searched. Failed/empty searches have a 7-day cooldown to avoid repeated
+Wikimedia requests on every ordinary site update. Set FORCE_MISSING_PHOTO_REFRESH=1
+or run the workflow manually with retry_missing_photos=true to retry those gaps.
 """
+from __future__ import annotations
 import json, os, re, time, urllib.parse, urllib.request, urllib.error
+from datetime import datetime, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -11,11 +16,40 @@ DIST = ROOT / 'dist'
 PHOTO_DIR = DIST / 'assets' / 'photos'
 PHOTO_DIR.mkdir(parents=True, exist_ok=True)
 PLACES = json.loads((ROOT / 'places.json').read_text(encoding='utf-8'))
-UA = 'JapanAtlasProPhotoBundler/1.1 (personal travel planner; Wikimedia Commons API; contact via GitHub repository)'
+UA = 'JapanAtlasProPhotoBundler/2.0 (personal travel planner; Wikimedia Commons API; contact via GitHub repository)'
+COOLDOWN_SECONDS = 7 * 24 * 60 * 60
+FORCE_MISSING_REFRESH = os.environ.get('FORCE_MISSING_PHOTO_REFRESH', '').lower() in ('1','true','yes','on')
+MANIFEST_PATH = PHOTO_DIR / 'manifest.json'
 
-# Commons may return HTTP 429 when a build makes many searches quickly.
-# Retry politely, honoring Retry-After and backing off between attempts.
-def get_json(url):
+QUERY_VARIANTS = {
+ 't1':['Sensō-ji temple Asakusa Tokyo'], 't2':['Kaminarimon Thunder Gate Asakusa Tokyo'],
+ 't3':['Nakamise shopping street Asakusa Tokyo'], 't4':['Meiji Jingu shrine Tokyo'],
+ 't5':['Shibuya Scramble Crossing Tokyo'], 't6':['Hachiko statue Shibuya Tokyo'],
+ 't7':['Tokyo Tower Japan'], 't8':['Godzilla Head Hotel Gracery Shinjuku Tokyo','新宿 ゴジラヘッド ホテルグレイスリー'],
+ 't9':['麦わらストア 渋谷パルコ ワンピース','ONE PIECE Mugiwara Store Shibuya PARCO','ワンピース 麦わらストア 東京'],
+ 't10':['Suga Shrine stairs Yotsuya Tokyo Your Name','須賀神社 男坂 君の名は 四谷'],
+ 't11':['Warner Bros Studio Tour Tokyo Making Harry Potter'], 'f1':['Lake Kawaguchiko Mount Fuji Japan'],
+ 'f2':['Lake Ashi Motohakone Hakone Japan'], 'f3':['Hakone Shrine lake torii Japan'],
+ 'k1':['Fushimi Inari Taisha red torii Kyoto'], 'k2':['Kiyomizu dera temple Kyoto'],
+ 'k3':['Ninenzaka street Kyoto'], 'k4':['Sannenzaka street Kyoto'], 'k5':['Yasaka Pagoda Hokanji Kyoto'],
+ 'k6':['Gion district Kyoto traditional street'], 'k7':['Yasaka Shrine Kyoto'],
+ 'k8':['Arashiyama Bamboo Grove Kyoto'], 'k9':['Togetsukyo Bridge Arashiyama Kyoto'],
+ 'k10':['Kinkakuji Golden Pavilion Kyoto'], 'k11':['Nishiki Market Kyoto'],
+ 'o1':['Osaka Castle park exterior'], 'o2':['Hokoku Shrine Osaka Castle Park','大阪城公園 豊國神社'],
+ 'o3':['Dotonbori canal Glico sign Osaka'], 'x1':['Shibuya Sky observation deck Tokyo'],
+ 'x2':['Maruyama Park Kyoto'], 'x3':['Shinsaibashi shopping street Osaka'],
+ 'x4':['Takeshita Street Harajuku Tokyo'], 'x5':['Namba Yasaka Shrine Osaka lion head'],
+ 'x6':['Nijo Castle Kyoto'], 'x7':['Pontocho Alley Kyoto']
+}
+
+def now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec='seconds')
+
+def clean_html(value: str) -> str:
+    value = re.sub(r'<[^>]+>', '', value or '')
+    return re.sub(r'\s+', ' ', value).strip()
+
+def get_json(url: str) -> dict:
     for attempt in range(6):
         req = urllib.request.Request(url, headers={'User-Agent': UA, 'Accept': 'application/json'})
         try:
@@ -25,7 +59,7 @@ def get_json(url):
             if e.code != 429 and e.code not in (500, 502, 503, 504):
                 raise
             retry_after = e.headers.get('Retry-After')
-            delay = int(retry_after) if retry_after and retry_after.isdigit() else min(15 * (2 ** attempt), 180)
+            delay = int(retry_after) if retry_after and retry_after.isdigit() else min(12 * (2 ** attempt), 120)
             if attempt == 5:
                 raise
             print(f'WARN HTTP {e.code}; retrying Commons search in {delay}s (attempt {attempt + 1}/6)')
@@ -33,100 +67,156 @@ def get_json(url):
         except (urllib.error.URLError, TimeoutError) as e:
             if attempt == 5:
                 raise
-            delay = min(5 * (2 ** attempt), 60)
+            delay = min(4 * (2 ** attempt), 45)
             print(f'WARN network error; retrying in {delay}s (attempt {attempt + 1}/6): {e}')
             time.sleep(delay)
     return {}
 
-def clean_html(value):
-    value = re.sub(r'<[^>]+>', '', value or '')
-    return re.sub(r'\s+', ' ', value).strip()
+def queries_for(place: dict) -> list[str]:
+    return QUERY_VARIANTS.get(place['id'], [f"{place['name']} {place['area']} Japan"])
 
-def query_for(p):
-    overrides = {
-      't1':'Sensō-ji temple Asakusa Tokyo', 't2':'Kaminarimon Thunder Gate Asakusa Tokyo',
-      't3':'Nakamise shopping street Asakusa Tokyo', 't4':'Meiji Jingu shrine Tokyo',
-      't5':'Shibuya Scramble Crossing Tokyo', 't6':'Hachiko statue Shibuya Tokyo',
-      't7':'Tokyo Tower Japan', 't8':'Godzilla head Hotel Gracery Shinjuku',
-      't9':'ONE PIECE Mugiwara Store Shibuya PARCO', 't10':'Suga Shrine stairs Yotsuya Tokyo Your Name',
-      't11':'Warner Bros Studio Tour Tokyo Making Harry Potter', 'f1':'Lake Kawaguchiko Mount Fuji Japan',
-      'f2':'Lake Ashi Motohakone Hakone Japan', 'f3':'Hakone Shrine lake torii Japan',
-      'k1':'Fushimi Inari Taisha red torii Kyoto', 'k2':'Kiyomizu dera temple Kyoto',
-      'k3':'Ninenzaka street Kyoto', 'k4':'Sannenzaka street Kyoto', 'k5':'Yasaka Pagoda Hokanji Kyoto',
-      'k6':'Gion district Kyoto traditional street', 'k7':'Yasaka Shrine Kyoto',
-      'k8':'Arashiyama Bamboo Grove Kyoto', 'k9':'Togetsukyo Bridge Arashiyama Kyoto',
-      'k10':'Kinkakuji Golden Pavilion Kyoto', 'k11':'Nishiki Market Kyoto',
-      'o1':'Osaka Castle park exterior', 'o2':'Hokoku Shrine Osaka Castle Park', 'o3':'Dotonbori canal Glico sign Osaka',
-      'x1':'Shibuya Sky observation deck Tokyo', 'x2':'Maruyama Park Kyoto',
-      'x3':'Shinsaibashi shopping street Osaka', 'x4':'Takeshita Street Harajuku Tokyo',
-      'x5':'Namba Yasaka Shrine Osaka lion head', 'x6':'Nijo Castle Kyoto', 'x7':'Pontocho Alley Kyoto'
-    }
-    return overrides.get(p['id'], p['name'] + ' ' + p['area'] + ' Japan')
-
-def search_images(p):
-    query = query_for(p)
-    params = {'action':'query','generator':'search','gsrsearch':'filetype:bitmap ' + query,
-              'gsrnamespace':6,'gsrlimit':16,'prop':'imageinfo','iiprop':'url|extmetadata',
-              'iiurlwidth':1000,'format':'json'}
-    url = 'https://commons.wikimedia.org/w/api.php?' + urllib.parse.urlencode(params)
-    # Slow the request rate: one Commons search per destination, with a pause.
-    time.sleep(2.0)
+def local_asset_exists(item: dict) -> bool:
+    thumb = str(item.get('thumb') or '')
+    if not thumb.startswith('./assets/photos/'):
+        return False
+    rel = thumb[2:]
+    path = (DIST / rel).resolve()
     try:
-        data = get_json(url)
-    except Exception as e:
-        print(f"WARN Commons search failed for {p['id']}: {e}")
-        return []
-    pages = list((data.get('query',{}).get('pages') or {}).values())
-    wanted = [w.lower() for w in re.findall(r'[a-z0-9]+', query) if len(w)>3]
-    results=[]
-    for page in pages:
-        ii=(page.get('imageinfo') or [{}])[0]
-        url=ii.get('thumburl'); source=ii.get('descriptionurl')
-        if not url or not source or not url.lower().split('?')[0].endswith(('.jpg','.jpeg','.png','.webp')): continue
-        title=page.get('title','Photo').replace('File:','').replace('_',' ')
-        ext=ii.get('extmetadata') or {}
-        description=clean_html((ext.get('ImageDescription') or {}).get('value',''))
-        text=(title+' '+description).lower()
-        score=sum(1 for w in wanted if w in text)
-        # Prioritise names matching the place; query search itself is relevance-ranked.
-        results.append((score, {'title':title,'url':url,'source':source,
-          'author':clean_html((ext.get('Artist') or {}).get('value','Unknown author')),
-          'license':clean_html((ext.get('LicenseShortName') or {}).get('value','See source page')),
-          'licenseUrl':(ext.get('LicenseUrl') or {}).get('value',''),
-          'description':description}))
-    results.sort(key=lambda x:x[0], reverse=True)
-    # avoid near-identical titles; use three to keep total download reasonable
-    picked=[]; seen=set()
-    for _, item in results:
-        norm=re.sub(r'[^a-z0-9]','',item['title'].lower())
-        if norm in seen: continue
-        seen.add(norm); picked.append(item)
-        if len(picked)>=3: break
-    return picked
+        path.relative_to((DIST / 'assets' / 'photos').resolve())
+    except ValueError:
+        return False
+    return path.is_file() and path.stat().st_size > 1000
 
-def download(url, path):
-    req=urllib.request.Request(url, headers={'User-Agent':UA})
+def load_previous() -> tuple[dict, dict]:
+    try:
+        raw = json.loads(MANIFEST_PATH.read_text(encoding='utf-8'))
+        if not isinstance(raw, dict):
+            raw = {}
+    except (OSError, json.JSONDecodeError):
+        raw = {}
+    meta = raw.get('_meta') if isinstance(raw.get('_meta'), dict) else {}
+    return raw, meta
+
+def search_images(place: dict) -> list[dict]:
+    for query in queries_for(place):
+        params = {'action':'query','generator':'search','gsrsearch':'filetype:bitmap ' + query,
+                  'gsrnamespace':6,'gsrlimit':16,'prop':'imageinfo','iiprop':'url|extmetadata',
+                  'iiurlwidth':1000,'format':'json'}
+        url = 'https://commons.wikimedia.org/w/api.php?' + urllib.parse.urlencode(params)
+        time.sleep(1.5)
+        try:
+            data = get_json(url)
+        except Exception as e:
+            print(f"WARN Commons search failed for {place['id']} ({query}): {e}")
+            continue
+        pages = list((data.get('query', {}).get('pages') or {}).values())
+        wanted = [w.lower() for w in re.findall(r'[a-z0-9]+', query) if len(w) > 3]
+        results = []
+        for page in pages:
+            ii = (page.get('imageinfo') or [{}])[0]
+            url_thumb, source = ii.get('thumburl'), ii.get('descriptionurl')
+            if not url_thumb or not source or not url_thumb.lower().split('?')[0].endswith(('.jpg','.jpeg','.png','.webp')):
+                continue
+            title = page.get('title','Photo').replace('File:','').replace('_',' ')
+            ext = ii.get('extmetadata') or {}
+            description = clean_html((ext.get('ImageDescription') or {}).get('value',''))
+            text = (title + ' ' + description).lower()
+            score = sum(1 for word in wanted if word in text)
+            results.append((score, {'title':title,'url':url_thumb,'source':source,
+                'author':clean_html((ext.get('Artist') or {}).get('value','Unknown author')),
+                'license':clean_html((ext.get('LicenseShortName') or {}).get('value','See source page')),
+                'licenseUrl':(ext.get('LicenseUrl') or {}).get('value',''), 'description':description}))
+        results.sort(key=lambda x:x[0], reverse=True)
+        picked, seen = [], set()
+        for _, item in results:
+            norm = re.sub(r'[^a-z0-9]','',item['title'].lower())
+            if norm in seen:
+                continue
+            seen.add(norm); picked.append(item)
+            if len(picked) >= 3:
+                break
+        if picked:
+            return picked
+    return []
+
+def download(url: str, path: Path) -> None:
+    req = urllib.request.Request(url, headers={'User-Agent':UA})
     with urllib.request.urlopen(req, timeout=45) as r:
-        data=r.read()
-    if len(data)<4000: raise ValueError('download unexpectedly small')
+        data = r.read()
+    if len(data) < 4000:
+        raise ValueError('download unexpectedly small')
+    path.parent.mkdir(parents=True, exist_ok=True)
     path.write_bytes(data)
 
-manifest={}
-for index,p in enumerate(PLACES):
-    pid=p['id']; picked=search_images(p); saved=[]
-    for j,item in enumerate(picked,1):
-        ext='.webp' if '.webp' in item['url'].lower() else '.jpg'
-        rel=f"assets/photos/{pid}-{j}{ext}"
-        try:
-            download(item['url'], DIST/rel)
-            saved.append({'title':item['title'],'thumb':'./'+rel,'page':item['source'],
-                          'author':item['author'] or 'Unknown author','license':item['license'],
-                          'licenseUrl':item['licenseUrl'],'description':item['description']})
-            print(f"OK {pid}: {item['title']}")
-        except Exception as e:
-            print(f"WARN image download failed for {pid}: {e}")
-        time.sleep(0.8)
-    manifest[pid]=saved
-    if not saved: print(f"WARN no bundled photos for {pid}; runtime online search remains as fallback")
-(DIST/'assets'/'photos'/'manifest.json').write_text(json.dumps(manifest,ensure_ascii=False,indent=2),encoding='utf-8')
-print('Bundled photos:',sum(len(v) for v in manifest.values()),'across',len(manifest),'places')
+def write_manifest(manifest: dict, meta: dict) -> None:
+    manifest['_meta'] = meta
+    MANIFEST_PATH.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding='utf-8')
+
+def build() -> int:
+    previous, old_meta = load_previous()
+    meta = dict(old_meta)
+    last_attempt = dict(meta.get('lastAttempt') or {})
+    manifest = {}
+    forced_ids = []
+    skipped_cached = 0
+    queried = 0
+    for place in PLACES:
+        pid = place['id']
+        old_items = previous.get(pid, [])
+        valid = [item for item in old_items if isinstance(item, dict) and local_asset_exists(item)] if isinstance(old_items, list) else []
+        if valid:
+            manifest[pid] = valid
+            skipped_cached += len(valid)
+            print(f'SKIP {pid}: reused {len(valid)} bundled photo(s); no download needed')
+            continue
+        attempted = last_attempt.get(pid)
+        recent = False
+        if attempted and not FORCE_MISSING_REFRESH:
+            try:
+                dt = datetime.fromisoformat(attempted.replace('Z','+00:00'))
+                recent = (datetime.now(timezone.utc)-dt).total_seconds() < COOLDOWN_SECONDS
+            except (ValueError, TypeError):
+                recent = False
+        if recent:
+            manifest[pid] = []
+            print(f'SKIP {pid}: no saved photos; recent failed/empty search is in 7-day cooldown')
+            continue
+        queried += 1
+        if FORCE_MISSING_REFRESH:
+            forced_ids.append(pid)
+        print(f'SEARCH {pid}: looking for missing bundled photos')
+        picked = search_images(place)
+        saved = []
+        for j, item in enumerate(picked, 1):
+            ext = '.webp' if '.webp' in item['url'].lower() else '.png' if '.png' in item['url'].lower() else '.jpg'
+            rel = f'assets/photos/{pid}-{j}{ext}'
+            try:
+                download(item['url'], DIST / rel)
+                saved.append({'title':item['title'],'thumb':'./'+rel,'page':item['source'],
+                    'author':item['author'] or 'Unknown author','license':item['license'],
+                    'licenseUrl':item['licenseUrl'],'description':item['description']})
+                print(f"OK {pid}: {item['title']}")
+            except Exception as e:
+                print(f'WARN image download failed for {pid}: {e}')
+            time.sleep(0.5)
+        manifest[pid] = saved
+        last_attempt[pid] = now_iso()
+        if not saved:
+            print(f'WARN no bundled photos for {pid}; online archive fallback remains available')
+        # Persist progress during the build so a later failure doesn't lose all work.
+        meta['lastAttempt'] = last_attempt
+        write_manifest(manifest | {k:v for k,v in previous.items() if k not in manifest and k != '_meta'}, meta)
+    meta['lastAttempt'] = last_attempt
+    meta['curationVersion'] = (ROOT / 'scripts' / 'photo-cache-version.txt').read_text().strip() if (ROOT / 'scripts' / 'photo-cache-version.txt').exists() else '1'
+    write_manifest(manifest, meta)
+    total = sum(len(v) for k,v in manifest.items() if k != '_meta' and isinstance(v,list))
+    missing = [p['id'] for p in PLACES if not manifest.get(p['id'])]
+    print(f'Bundled photos: {total} across {len(PLACES)} places')
+    print(f'Reused cached photos: {skipped_cached}; destination searches this run: {queried}; missing bundles: {len(missing)}')
+    if missing:
+        print('Missing bundle IDs:', ', '.join(missing))
+        print('To retry missing destinations, run the workflow manually with retry_missing_photos enabled.')
+    return 0
+
+if __name__ == '__main__':
+    raise SystemExit(build())
