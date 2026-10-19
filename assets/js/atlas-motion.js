@@ -57,7 +57,7 @@
    if(!map||!map.isStyleLoaded())return;
    try{
     const source=map.getSource('atlas-itinerary-route');
-    const data={type:'Feature',properties:{kind:'planning-sequence'},geometry:{type:'LineString',coordinates:coords.length>1?coords:[]}};
+    const data=coords.length>1?{type:'Feature',properties:{kind:'planning-sequence'},geometry:{type:'LineString',coordinates:coords}}:{type:'FeatureCollection',features:[]};
     if(source){source.setData(data)}
     else{
      map.addSource('atlas-itinerary-route',{type:'geojson',data,lineMetrics:true});
