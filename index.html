@@ -734,6 +734,30 @@ input:focus,select:focus,textarea:focus{
 @media(max-width:760px){#page-overview .page-head{padding:22px 18px!important;border-radius:20px!important}#page-overview .page-head:after{right:8px;top:9px;transform:none;font-size:90px}#page-overview .page-head h1{max-width:95%;font-size:clamp(34px,9vw,46px)!important;line-height:1.02!important}#page-overview .head-actions{display:grid!important;grid-template-columns:1fr 1fr!important;width:100%}#page-overview .head-actions .btn:last-child{grid-column:1/-1}.atlas-route-hero{grid-template-columns:minmax(0,1fr)!important;padding:22px 18px!important;border-radius:21px!important}.atlas-route-hero h2{font-size:clamp(32px,8vw,42px)!important}.atlas-route-track{padding:15px 12px!important}.atlas-route-stops{gap:3px!important;margin:18px 0!important}.atlas-route-stop-dot{width:36px!important;height:36px!important;border-radius:12px!important;font-size:16px!important}.atlas-route-line{flex-basis:7px!important;margin-top:17px!important}.atlas-route-stop strong{font-size:9px!important}.atlas-route-stop small{font-size:8px!important;white-space:normal!important}.atlas-route-foot{font-size:8px!important}.atlas-gallery-hero{height:clamp(220px,65vw,330px)!important;min-height:220px!important}}
 @media(prefers-reduced-motion:reduce){.atlas-gallery-hero-img,.atlas-photo-tile,.atlas-photo-tile-image,.atlas-route-button{transition:none!important}}
 </style>
+<style id="atlas-screenshot-polish-2026">
+/* Screenshot follow-up: keep the mobile route card compact and make unloaded photos look intentional. */
+.atlas-gallery-hero{background:radial-gradient(ellipse at 82% 8%,rgba(201,226,210,.7),transparent 32%),linear-gradient(135deg,#dbe6dc 0%,#e9e1d4 52%,#d7e3e5 100%)!important}
+.atlas-gallery-hero-img{background:linear-gradient(135deg,#dbe6dc 0%,#e9e1d4 52%,#d7e3e5 100%)!important}
+.atlas-photo-tile{background:linear-gradient(145deg,#edf1e9,#e5e9e2 55%,#f0e7dc)!important}
+.atlas-photo-tile-image{background:linear-gradient(145deg,#edf1e9,#e5e9e2 55%,#f0e7dc)!important;min-height:100%!important}
+.atlas-photo-tile-image img{background:linear-gradient(145deg,#edf1e9,#e5e9e2 55%,#f0e7dc)!important;min-height:100%!important}
+.atlas-photo-tile.is-unavailable{display:none!important}
+.atlas-gallery-hero[data-photo-unavailable="true"]:before{content:"日";position:absolute;right:7%;top:2%;font-size:clamp(100px,24vw,210px);font-weight:900;line-height:1;color:rgba(255,255,255,.15);pointer-events:none;z-index:0}
+.atlas-gallery-hero[data-photo-unavailable="true"] .atlas-gallery-hero-label{z-index:2}
+.atlas-gallery-hero[data-photo-unavailable="true"] .atlas-gallery-hero-index{z-index:2}
+@media(max-width:760px){
+ .atlas-route-hero{gap:15px!important;padding:19px 15px!important;margin-top:0!important;margin-bottom:16px!important}
+ .atlas-route-hero-copy p{font-size:12px!important;line-height:1.65!important}
+ .atlas-route-actions{margin-top:15px!important;gap:7px!important}
+ .atlas-route-button{padding:10px 11px!important;min-height:40px!important}
+ .atlas-route-track{padding:13px 11px!important}
+ .atlas-route-stops{margin:14px 0!important}
+ .atlas-route-foot{gap:7px!important}
+ .atlas-route-foot span:last-child{max-width:58%;text-align:right}
+ .atlas-gallery-rail{gap:9px!important}
+ .atlas-photo-tile{min-height:92px!important}
+}
+</style>
 </head>
 <body>
 <div class="app">
@@ -983,7 +1007,7 @@ function renderPhotoGallery(p){
   <div class="atlas-gallery-rail-head"><span>More perspectives</span><span>Swipe to explore <span aria-hidden="true">→</span></span></div>
   <div class="atlas-gallery-rail" id="photoTrack-${safeId}" aria-label="More photos of ${esc(p.name)}">${imgs.map((im,i)=>`<button class="atlas-photo-tile ${i===0?'is-current':''}" type="button" data-photo-index="${i}" aria-label="Open photo ${i+1} of ${imgs.length} for ${esc(p.name)}"><span class="atlas-photo-tile-image"><img src="${esc(im.thumb)}" alt="${esc(p.id==='t9'?'MAGNET by SHIBUYA109 location reference':p.name)} — photo ${i+1}" loading="lazy" referrerpolicy="no-referrer"></span></button>`).join('')}</div>
   <div class="atlas-gallery-foot"><span><span class="atlas-credit-shield">ⓘ</span> Photo credits and licences preserved</span><button type="button" class="atlas-credit-button" data-photo-details="all">Photo details <span aria-hidden="true">↗</span></button></div>`;
- root.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{const tile=img.closest('.atlas-photo-tile');if(tile)tile.classList.add('is-unavailable');else if(img.classList.contains('atlas-gallery-hero-img')){img.style.display='none';const hero=img.closest('.atlas-gallery-hero');if(hero){hero.style.background='linear-gradient(135deg,#e5ebe3,#f2e4db)';const hint=hero.querySelector('.atlas-gallery-hero-hint');if(hint)hint.textContent='Photo unavailable · trying alternate sources…';}if(!__photoPending.has(p.id))loadOnlinePlacePhotos(p,true);}}));
+ root.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>{const tile=img.closest('.atlas-photo-tile');if(tile)tile.classList.add('is-unavailable');else if(img.classList.contains('atlas-gallery-hero-img')){img.style.display='none';const hero=img.closest('.atlas-gallery-hero');if(hero){hero.dataset.photoUnavailable='true';hero.style.background='radial-gradient(ellipse at 82% 8%,rgba(201,226,210,.7),transparent 32%),linear-gradient(135deg,#dbe6dc,#e9e1d4 52%,#d7e3e5)';const hint=hero.querySelector('.atlas-gallery-hero-hint');if(hint)hint.textContent='Photo unavailable · trying alternate sources…';}if(!__photoPending.has(p.id))loadOnlinePlacePhotos(p,true);}}));
  root.querySelectorAll('[data-photo-index]').forEach(btn=>btn.addEventListener('click',()=>openAtlasPhotoDetails(p,imgs,Number(btn.dataset.photoIndex))));
  const details=root.querySelector('[data-photo-details]');if(details)details.addEventListener('click',()=>openAtlasPhotoDetails(p,imgs,0));
 }
