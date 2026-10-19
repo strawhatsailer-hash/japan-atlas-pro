@@ -892,7 +892,7 @@ async function atlasEncodeSnapshot(obj){
  let packed=bytes;
  if('CompressionStream' in window){const stream=new Blob([bytes]).stream().pipeThrough(new CompressionStream('gzip'));packed=new Uint8Array(await new Response(stream).arrayBuffer())}
  let binary='';for(let i=0;i<packed.length;i+=8192)binary+=String.fromCharCode(...packed.subarray(i,Math.min(i+8192,packed.length)));
- return (packed===bytes?'j':'g')+btoa(binary).replace(/\\+/g,'-').replace(/\\//g,'_').replace(/=+$/,'');
+ return (packed===bytes?'j':'g')+btoa(binary).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');
 }
 async function atlasDecodeSnapshot(token){
  const mode=token[0],raw=token.slice(1).replace(/-/g,'+').replace(/_/g,'/');
