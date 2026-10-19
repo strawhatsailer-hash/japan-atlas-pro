@@ -254,3 +254,108 @@ input:focus,select:focus,textarea:focus{
   -webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:#fffdf7!important;
  }
 }
+
+
+/* Phase 3.2 — signature luxury finish: more visible glass, stronger hierarchy */
+:root{
+ --atlas-shadow-soft:0 12px 28px rgba(18,48,53,.075);
+ --atlas-shadow-lift:0 20px 46px rgba(18,48,53,.105);
+}
+body{
+ background:
+  radial-gradient(ellipse at 0% 18%,rgba(196,222,202,.38),transparent 28rem),
+  radial-gradient(ellipse at 100% 42%,rgba(242,211,193,.32),transparent 25rem),
+  linear-gradient(145deg,#fbfaf5 0%,#eef2e9 50%,#f8f2e9 100%)!important;
+}
+.topbar{
+ background:rgba(255,253,247,.76)!important;
+ border-bottom:1px solid rgba(255,255,255,.88)!important;
+ box-shadow:0 10px 32px rgba(18,48,53,.095),inset 0 1px rgba(255,255,255,.98)!important;
+}
+.brand-mark{box-shadow:0 8px 22px rgba(190,76,57,.25),inset 0 1px rgba(255,255,255,.38)!important}
+.page-head h1,.atlas-phase3-head h2{
+ color:#102e34!important;
+ text-shadow:0 1px 0 rgba(255,255,255,.7)!important;
+}
+.page-head h1{font-weight:950!important}
+.card,.day-card,.decision-card,.check-item,.photo-gallery,.place-panel,.budget-items,.budget-split,.table-wrap{
+ background:linear-gradient(145deg,rgba(255,255,252,.91),rgba(249,251,246,.68))!important;
+ border:1px solid rgba(255,255,255,.94)!important;
+ outline:1px solid rgba(184,202,187,.38);
+ box-shadow:0 15px 36px rgba(18,48,53,.075),0 3px 8px rgba(18,48,53,.025),inset 0 1px 0 rgba(255,255,255,.98)!important;
+}
+.card-head,.day-card .card-head{
+ background:linear-gradient(115deg,rgba(255,255,251,.92),rgba(220,235,222,.58))!important;
+}
+.card-title,.day-card h3,.day-card h4,.place-name,.stat-value{
+ color:#102f35!important;
+}
+.stat{
+ background:linear-gradient(145deg,rgba(255,255,253,.97),rgba(242,247,239,.8))!important;
+ border:1px solid rgba(255,255,255,.95)!important;
+ box-shadow:0 12px 28px rgba(18,48,53,.075),inset 0 1px rgba(255,255,255,.98)!important;
+}
+#page-overview .atlas-route-hero{
+ box-shadow:0 25px 55px rgba(14,45,53,.23),inset 0 1px rgba(255,255,255,.22)!important;
+}
+.atlas-phase3{
+ background:
+  radial-gradient(ellipse at 100% 0%,rgba(163,207,177,.48),transparent 27rem),
+  radial-gradient(ellipse at 0% 100%,rgba(245,204,182,.42),transparent 24rem),
+  linear-gradient(135deg,rgba(255,255,251,.95),rgba(237,245,235,.87))!important;
+ border:1px solid rgba(255,255,255,.98)!important;
+ outline:1px solid rgba(178,200,182,.55);
+ box-shadow:0 25px 58px rgba(18,48,53,.11),0 5px 14px rgba(18,48,53,.035),inset 0 1px 0 #fff!important;
+}
+.atlas-phase3-panel{
+ background:linear-gradient(145deg,rgba(255,255,255,.91),rgba(247,250,244,.66))!important;
+ border:1px solid rgba(255,255,255,.98)!important;
+ box-shadow:0 14px 30px rgba(18,48,53,.075),inset 0 1px 0 rgba(255,255,255,.99)!important;
+}
+.atlas-phase3-journey{background:radial-gradient(ellipse at 100% 0%,rgba(163,207,177,.24),transparent 65%),linear-gradient(145deg,rgba(255,255,255,.94),rgba(243,249,240,.77))!important}
+.atlas-phase3-days{background:radial-gradient(ellipse at 100% 0%,rgba(244,213,193,.3),transparent 70%),linear-gradient(145deg,rgba(255,255,255,.94),rgba(250,248,241,.75))!important}
+.atlas-phase3-budget{background:radial-gradient(ellipse at 100% 0%,rgba(160,201,177,.22),transparent 65%),linear-gradient(145deg,rgba(255,255,255,.94),rgba(241,247,239,.76))!important}
+.atlas-phase3-track span{box-shadow:0 0 18px rgba(54,127,100,.3)!important}
+.atlas-phase3-orb,.atlas-phase3-mini-icon,.atlas-phase3-ready-mark{
+ box-shadow:0 8px 20px rgba(22,64,61,.1),inset 0 1px 0 rgba(255,255,255,.98)!important;
+}
+input,select,textarea{
+ background:linear-gradient(145deg,rgba(255,255,253,.98),rgba(249,250,245,.92))!important;
+ border-color:rgba(183,200,187,.82)!important;
+ box-shadow:inset 0 1px 2px rgba(18,48,53,.035),0 2px 5px rgba(18,48,53,.02)!important;
+}
+.btn.primary{
+ background:linear-gradient(120deg,#204e50 0%,#14373e 58%,#28595a 100%)!important;
+ box-shadow:0 9px 23px rgba(20,56,62,.22),inset 0 1px rgba(255,255,255,.2)!important;
+}
+.mobile-nav{
+ background:rgba(248,249,242,.79)!important;
+ border-top:1px solid rgba(255,255,255,.98)!important;
+ box-shadow:0 -15px 36px rgba(18,48,53,.13),inset 0 1px rgba(255,255,255,.99)!important;
+}
+.mobile-nav>button.active{
+ background:linear-gradient(145deg,rgba(255,237,225,.98),rgba(245,224,211,.88))!important;
+ border-color:rgba(255,255,255,.98)!important;
+ box-shadow:0 5px 15px rgba(184,76,55,.09),inset 0 1px rgba(255,255,255,.99)!important;
+}
+@media(min-width:761px){
+ .card:hover,.day-card:hover,.decision-card:hover,.place-panel:hover{
+  box-shadow:0 20px 42px rgba(18,48,53,.095),inset 0 1px rgba(255,255,255,.98)!important;
+ }
+}
+@media(max-width:760px){
+ body{background:linear-gradient(180deg,#f8f8f1 0%,#eff2e9 55%,#f8f3eb 100%)!important}
+ .card,.day-card,.decision-card,.check-item,.photo-gallery,.place-panel,.budget-items,.budget-split,.table-wrap{
+  box-shadow:0 10px 25px rgba(18,48,53,.065),inset 0 1px rgba(255,255,255,.99)!important;
+ }
+ .atlas-phase3{padding:16px 12px!important}
+ .atlas-phase3-head h2{font-size:clamp(27px,7.5vw,33px)!important}
+ .atlas-phase3-panel{padding:14px!important}
+ .page-head h1{line-height:1.04!important}
+}
+@media(prefers-reduced-transparency:reduce){
+ body{background:#f5f4ed!important}
+ .card,.day-card,.decision-card,.check-item,.photo-gallery,.place-panel,.budget-items,.budget-split,.table-wrap,.atlas-phase3,.atlas-phase3-panel,.topbar,.mobile-nav{
+  background:#fffdf7!important;outline:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
+ }
+}
