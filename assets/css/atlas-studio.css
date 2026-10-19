@@ -48,7 +48,7 @@ body{
  padding:clamp(24px,3.5vw,44px)!important;gap:clamp(18px,2.6vw,34px)!important;
  border:1px solid rgba(255,255,255,.38)!important;border-radius:28px!important;
  background-color:#18363e!important;
- background-image:linear-gradient(100deg,rgba(12,34,40,.92) 0%,rgba(12,34,40,.78) 42%,rgba(12,34,40,.2) 100%),url("https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=2000&q=85")!important;
+ background-image:linear-gradient(100deg,rgba(12,34,40,.92) 0%,rgba(12,34,40,.78) 42%,rgba(12,34,40,.2) 100%),url("https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1400&q=75")!important;
  background-size:cover!important;background-position:center 48%!important;
  box-shadow:0 24px 58px rgba(18,48,54,.2),inset 0 1px rgba(255,255,255,.25)!important;
 }
@@ -125,7 +125,7 @@ input:focus,select:focus,textarea:focus{border-color:#8aa99b!important;box-shado
  #page-overview .head-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
  #page-overview .head-actions .btn{min-width:0;white-space:normal;padding:10px 8px!important;font-size:12px!important}
  #page-overview .head-actions .btn:last-child{grid-column:1/-1}
- #page-overview .atlas-route-hero{min-height:0!important;grid-template-columns:minmax(0,1fr)!important;padding:25px 15px 16px!important;gap:18px!important;border-radius:22px!important;background-position:58% center!important}
+ #page-overview .atlas-route-hero{background-image:linear-gradient(100deg,rgba(13,34,41,.94) 0%,rgba(13,34,41,.82) 40%,rgba(13,34,41,.22) 100%),url("https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=900&q=70")!important;min-height:0!important;grid-template-columns:minmax(0,1fr)!important;padding:25px 15px 16px!important;gap:18px!important;border-radius:22px!important;background-position:58% center!important}
  #page-overview .atlas-route-hero h2{font-size:clamp(37px,10vw,49px)!important;max-width:12ch}
  #page-overview .atlas-route-hero-copy p{font-size:13px!important;max-width:33ch}
  #page-overview .atlas-route-actions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
