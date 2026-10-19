@@ -149,3 +149,14 @@ input:focus,select:focus,textarea:focus{border-color:#8aa99b!important;box-shado
 }
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.btn,.place-list-row,.check-item{transition:none!important}}
 @media(prefers-reduced-transparency:reduce){.topbar,.mobile-nav,#page-overview .atlas-route-track{background:#fffdf7!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important}}
+
+
+/* Target the actual mobile navigation markup: its items are buttons, not .nav elements. */
+.mobile-nav{display:flex!important;align-items:stretch!important;justify-content:space-around!important;gap:3px!important}
+.mobile-nav>button{flex:1 1 0!important;min-width:0!important;display:flex!important;flex-direction:column!important;align-items:center!important;justify-content:center!important;gap:4px!important;padding:8px 2px!important;border:1px solid transparent!important;border-radius:13px!important;background:transparent!important;color:#71817a!important;font-size:10px!important;font-weight:700!important;line-height:1.15!important;white-space:nowrap!important}
+.mobile-nav>button>span{font-size:17px!important;line-height:1.1!important}
+.mobile-nav>button.active{background:linear-gradient(145deg,#f8e6de,#f4eee3)!important;border-color:#ead2c6!important;color:#b84937!important;box-shadow:inset 0 1px #fff!important}
+@media(max-width:760px){
+ .mobile-nav>button{font-size:9px!important;padding:7px 1px!important}
+ .mobile-nav>button>span{font-size:16px!important}
+}
