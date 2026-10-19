@@ -1090,7 +1090,8 @@ function photoQueryVariants(p){
   't9':['MAGNET by SHIBUYA109 exterior Shibuya Tokyo','マグネット バイ 渋谷109 外観','MAGNET by SHIBUYA109 Shibuya Crossing'],
   't10':['Suga Shrine stairs Yotsuya Tokyo Your Name','須賀神社 男坂 君の名は 四谷'],
   'o2':['Hokoku Shrine Osaka Castle Park','大阪城公園 豊國神社'],
-  'f2':['Lake Ashi Hakone Japan','Lake Ashi torii Hakone Shrine','芦ノ湖 箱根 湖']
+  'f2':['Lake Ashi Hakone Japan','Lake Ashi torii Hakone Shrine','芦ノ湖 箱根 湖'],
+  't11':['Warner Bros Studio Tour Tokyo Harry Potter','Warner Bros Studio Tour Tokyo official attraction','ワーナー ブラザース スタジオツアー 東京 ハリー ポッター']
  };
  if(special[p?.id])return special[p.id];
  let n=p?.name||'Japan destination';
@@ -1161,7 +1162,7 @@ function openAtlasPhotoDetails(place,images,index){
  const source=modal.querySelector('#atlasPhotoModalSource');source.href=im.page||'#';source.style.display=im.page?'inline-flex':'none';source.setAttribute('aria-label','Open original source and licence for '+place.name);
  modal.classList.add('is-open');document.body.classList.add('atlas-modal-open');modal.querySelector('.atlas-photo-close').focus({preventScroll:true});
 }
-const PHOTO_SEARCH_CACHE_KEY='japan-atlas-photo-search-v3';
+const PHOTO_SEARCH_CACHE_KEY='japan-atlas-photo-search-v4';
 function readPhotoSearchCache(id){try{const all=JSON.parse(localStorage.getItem(PHOTO_SEARCH_CACHE_KEY)||'{}');const entry=all[id];if(entry&&Array.isArray(entry.photos)&&entry.photos.length>0&&Date.now()-entry.savedAt<7*24*60*60*1000)return entry.photos}catch(e){}return null}
 function writePhotoSearchCache(id,photos){try{if(!Array.isArray(photos)||!photos.length)return;const all=JSON.parse(localStorage.getItem(PHOTO_SEARCH_CACHE_KEY)||'{}');all[id]={savedAt:Date.now(),photos};localStorage.setItem(PHOTO_SEARCH_CACHE_KEY,JSON.stringify(all))}catch(e){}}
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -1182,8 +1183,10 @@ async function loadOnlinePlacePhotos(p,force=false){
  try{
   let clean=[];const variants=photoQueryVariants(p);
   for(const q of variants){const batch=await fetchCommonsQuery(q);clean.push(...batch);clean=clean.filter((x,i,a)=>a.findIndex(y=>y.page===x.page)===i);if(clean.length>=4)break;await sleep(250)}
-  const terms=(p.name+' '+p.area).toLowerCase().split(/[^a-z0-9]+/).filter(t=>t.length>3&&!['lake','place','japan','view'].includes(t));
-  clean.sort((a,b)=>{const score=x=>{const text=(x.title+' '+x.description).toLowerCase();return terms.reduce((n,w)=>n+(text.includes(w)?3:0),0)+(text.includes(p.area.toLowerCase())?2:0)};return score(b)-score(a)});
+  const terms=(p.name+' '+p.area).toLowerCase().split(/[^a-z0-9]+/).filter(t=>t.length>3&&!['lake','place','japan','view','tokyo','kyoto','osaka','fuji','hakone'].includes(t));
+  const relevance=x=>{const text=(x.title+' '+x.description).normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();return terms.reduce((n,w)=>n+(text.includes(w)?1:0),0)};
+  clean=clean.filter(x=>relevance(x)>=Math.min(2,terms.length));
+  clean.sort((a,b)=>relevance(b)-relevance(a));
   window.__atlasPhotos[p.id]=clean.slice(0,8);if(window.__atlasPhotos[p.id].length)writePhotoSearchCache(p.id,window.__atlasPhotos[p.id]);renderMapPlaces();
  }catch(e){window.__atlasPhotos[p.id]=[]}
  finally{__photoPending.delete(p.id);if(currentPlace()?.id===p.id)renderPhotoGallery(p)}
