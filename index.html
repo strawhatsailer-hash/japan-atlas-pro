@@ -8,6 +8,9 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <title>Japan Atlas — Your Japan Trip Planner</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
  :root{
  --bg:#f5f7fb;--panel:#ffffff;--panel2:#f3f6fa;--panel3:#e9eef5;--line:#dce3ec;
@@ -776,7 +779,7 @@ input:focus,select:focus,textarea:focus{
 }
 </style>
 <link rel="stylesheet" href="./assets/css/atlas-premium.css?v=3" />
-<link rel="stylesheet" href="./assets/css/atlas-studio.css?v=2" />
+<link rel="stylesheet" href="./assets/css/atlas-studio.css?v=3" />
 </head>
 <body>
 <div class="app">
@@ -1346,7 +1349,7 @@ setTimeout(()=>{const p=currentPlace();if(p)loadPlacePhotos(p)},250);
  let atlasMapStyle='https://tiles.openfreemap.org/styles/liberty';
  const styleToggle=document.getElementById('mapStyleToggle'); if(styleToggle)styleToggle.addEventListener('click',()=>{atlasMapStyle=atlasMapStyle.endsWith('/liberty')?'https://tiles.openfreemap.org/styles/positron':'https://tiles.openfreemap.org/styles/liberty';maps.forEach(o=>o.map.setStyle(atlasMapStyle));styleToggle.textContent=atlasMapStyle.endsWith('/liberty')?'Map style: Colour':'Map style: Soft';});
  function renderMaps(){if(!maps.length)return;maps.forEach(o=>{o.markers.forEach(m=>m.remove());o.markers=[];let list=visiblePlaces();if(o.overview)list=list.filter(p=>['Tokyo','Fuji / Hakone','Kyoto','Osaka'].includes(p.area));list.forEach(p=>{const color=colors[p.area]||colors.Optional;const node=document.createElement('button');node.type='button';node.setAttribute('aria-label',p.name);node.title=p.name;node.style.cssText=`width:28px;height:28px;border:3px solid white;border-radius:50% 50% 50% 5px;transform:rotate(-45deg);background:${color};box-shadow:0 3px 12px #17203355;display:grid;place-items:center;padding:0;cursor:pointer`;const letter=document.createElement('span');letter.textContent=(typeof categoryEmoji==='function'?categoryEmoji(p):(p.area==='Tokyo'?'T':p.area==='Fuji / Hakone'?'F':p.area==='Kyoto'?'K':p.area==='Osaka'?'O':'•'));letter.style.cssText='color:white;font:800 13px system-ui;transform:rotate(45deg)';node.appendChild(letter);const marker=new maplibregl.Marker({element:node,anchor:'bottom'}).setLngLat([+p.lng,+p.lat]).setPopup(new maplibregl.Popup({offset:18,maxWidth:'280px'}).setHTML(popupHtml(p))).addTo(o.map);node.addEventListener('click',()=>{if(typeof window.selectPlace==='function')window.selectPlace(p.id)});o.markers.push(marker)});if(list.length){if(window.state.mapFilter==='All'&&o.overview){o.map.jumpTo({center:[137.6,36.2],zoom:4.6})}else if(list.length===1){o.map.flyTo({center:[+list[0].lng,+list[0].lat],zoom:13})}else{const b=new maplibregl.LngLatBounds();list.forEach(p=>b.extend([+p.lng,+p.lat]));o.map.fitBounds(b,{padding:{top:65,bottom:65,left:45,right:45},maxZoom:12,duration:0})}}o.map.resize()})}
- window.refreshMaps=renderMaps;window.renderOfflineMaps=function(){};window.setMapFilter=function(f){window.state.mapFilter=f;document.querySelectorAll('[data-mapfilter]').forEach(b=>b.classList.toggle('active',b.dataset.mapfilter===f));renderMaps();if(typeof window.renderMapPlaces==='function')window.renderMapPlaces();if(typeof window.save==='function')window.save()};
+ window.__atlasMaps=maps;window.refreshMaps=renderMaps;window.renderOfflineMaps=function(){};window.setMapFilter=function(f){window.state.mapFilter=f;document.querySelectorAll('[data-mapfilter]').forEach(b=>b.classList.toggle('active',b.dataset.mapfilter===f));renderMaps();if(typeof window.renderMapPlaces==='function')window.renderMapPlaces();if(typeof window.save==='function')window.save()};
  document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.map-wrap').forEach(el=>{el.style.background='#f3f6f8';const old=el.querySelector('.map-online-notice');if(old)old.remove();const n=document.createElement('div');n.className='map-online-notice';n.textContent='Live street map · pinch/scroll to zoom · drag to pan · internet required';n.style.cssText='position:absolute;z-index:5;left:10px;right:58px;top:10px;background:#ffffffed;border:1px solid #dce3ec;border-radius:10px;padding:8px 10px;color:#4b5b70;font-size:11px;pointer-events:none';el.appendChild(n)});loadMapLibre()});
 })();
 </script>
@@ -1359,5 +1362,6 @@ if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
   window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
 }
 </script>
+<script src="./assets/js/atlas-motion.js?v=1"></script>
 </body>
 </html>
