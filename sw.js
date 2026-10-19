@@ -1,4 +1,6 @@
-const CACHE_NAME = 'japan-atlas-shell-v18-release2-dashboard-branding';
+// Previous shell cache retired by this release: japan-atlas-shell-v18-release2-dashboard-branding
+// Previous shell cache retired by this release: japan-atlas-shell-v19-cohesive-redesign
+const CACHE_NAME = 'japan-atlas-shell-v19-cohesive-redesign';
 const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './places.json'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
