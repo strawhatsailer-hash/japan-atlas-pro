@@ -1,5 +1,5 @@
 const CACHE_NAME = 'japan-atlas-shell-v34-fast-cache';
-const APP_SHELL = ['./','./index.html','./manifest.webmanifest','./icon.svg','./published-itinerary.json','./assets/css/atlas-premium.css','./assets/css/atlas-studio.css','./assets/js/atlas-motion.js'];
+const APP_SHELL = ['./','./index.html','./manifest.webmanifest','./icon.svg','./published-itinerary.json','./assets/css/atlas-premium.css','./assets/css/atlas-studio.css?v=4','./assets/js/atlas-motion.js'];
 
 self.addEventListener('install', event => {
   event.waitUntil(
@@ -27,7 +27,6 @@ self.addEventListener('fetch', event => {
 
   const isNavigation = req.mode === 'navigate' || url.pathname.endsWith('/index.html') || url.pathname.endsWith('/');
   if (isNavigation) {
-    // Return the last complete planner immediately while checking for a newer copy.
     const update = fetch(req).then(res => {
       if (res && res.ok) {
         const copy = res.clone();
@@ -43,21 +42,16 @@ self.addEventListener('fetch', event => {
     return;
   }
 
-  // Cache-first for same-origin assets and data; update cached copies in the background.
+  const update = fetch(req).then(res => {
+    if (res && res.ok) {
+      const copy = res.clone();
+      caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
+    }
+    return res;
+  });
+  event.waitUntil(update.catch(() => {}));
   event.respondWith(
-    caches.match(req).then(cached => {
-      const update = fetch(req).then(res => {
-        if (res && res.ok) {
-          const copy = res.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(req, copy));
-        }
-        return res;
-      });
-      if (cached) {
-        event.waitUntil(update.catch(() => {}));
-        return cached;
-      }
-      return update.catch(() => caches.match('./index.html'));
-    })
+    caches.match(req).then(cached => cached || update)
+      .catch(() => caches.match('./index.html'))
   );
 });
