@@ -598,6 +598,110 @@ img{max-width:100%}
 
 </style>
 
+
+<style id="atlas-premium-glass-2026">
+/* Visible premium refresh: warm porcelain, deep ink, restrained vermilion, and real glass depth. */
+:root{
+ --atlas-premium-ink:#17343d;
+ --atlas-premium-coral:#c84f3b;
+ --atlas-premium-border:rgba(204,211,202,.78);
+ --atlas-premium-shadow:0 18px 48px rgba(26,48,54,.075),0 3px 10px rgba(26,48,54,.045);
+}
+body{
+ background:
+  radial-gradient(ellipse at 4% 3%,rgba(221,237,226,.78),transparent 32rem),
+  radial-gradient(ellipse at 96% 12%,rgba(248,221,207,.66),transparent 30rem),
+  linear-gradient(160deg,#faf9f4 0%,#f2f4ef 55%,#f8f5ee 100%)!important;
+}
+.topbar{
+ background:rgba(255,253,248,.76)!important;
+ border-bottom:1px solid rgba(218,215,204,.72)!important;
+ box-shadow:0 10px 36px rgba(25,47,53,.065)!important;
+ -webkit-backdrop-filter:blur(24px) saturate(165%)!important;
+ backdrop-filter:blur(24px) saturate(165%)!important;
+}
+.brand-mark{
+ border:1px solid rgba(255,255,255,.56)!important;
+ box-shadow:0 8px 22px rgba(194,76,57,.22),inset 0 1px 0 rgba(255,255,255,.32)!important;
+}
+.page-head h1,.atlas-route-hero h2{letter-spacing:-.045em!important}
+.page-head h1{
+ background:linear-gradient(120deg,#183640 0%,#285661 65%,#c4513b 125%);
+ -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.card,.stat,.day-card,.decision-card,.table-wrap,.check-item,.photo-gallery,.place-panel,.route-box{
+ border:1px solid var(--atlas-premium-border)!important;
+ box-shadow:var(--atlas-premium-shadow)!important;
+ background:linear-gradient(145deg,rgba(255,255,255,.91),rgba(255,255,255,.72))!important;
+ -webkit-backdrop-filter:blur(18px) saturate(135%)!important;
+ backdrop-filter:blur(18px) saturate(135%)!important;
+ transition:box-shadow .22s ease,border-color .22s ease,transform .22s ease!important;
+}
+.card-head{background:linear-gradient(110deg,rgba(255,255,255,.82),rgba(241,246,239,.56))}
+.stat{position:relative;overflow:hidden}
+.stat:before{
+ content:"";position:absolute;top:0;left:0;right:0;height:3px;
+ background:linear-gradient(90deg,#c84f3b,#e7b59a,#5b9c8b);
+ opacity:.78;
+}
+.budget-total,.budget-summary,.atlas-route-track{
+ border:1px solid rgba(255,255,255,.22)!important;
+ background:linear-gradient(135deg,#17343d 0%,#234d56 62%,#31656a 100%)!important;
+ box-shadow:0 16px 34px rgba(23,52,61,.2),inset 0 1px 0 rgba(255,255,255,.14)!important;
+ color:#fff!important;
+}
+.btn.primary,.btn.dark,.atlas-route-button{
+ background:linear-gradient(135deg,#17343d,#244b55)!important;
+ box-shadow:0 6px 16px rgba(23,52,61,.17),inset 0 1px 0 rgba(255,255,255,.16)!important;
+}
+.btn:not(.primary):hover,.nav:hover{border-color:rgba(200,79,59,.36)!important}
+input,select,textarea{
+ border-color:rgba(205,211,202,.94)!important;
+ background:rgba(255,255,255,.88)!important;
+ box-shadow:inset 0 1px 2px rgba(24,48,55,.025)!important;
+}
+input:focus,select:focus,textarea:focus{
+ border-color:#6eaaa2!important;
+ box-shadow:0 0 0 3px rgba(91,156,139,.16)!important;
+}
+.notice,.info{
+ border-radius:15px!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 5px 15px rgba(23,52,61,.035)!important;
+}
+.mobile-nav{
+ background:rgba(255,253,248,.88)!important;
+ border-top:1px solid rgba(213,213,202,.8)!important;
+ box-shadow:0 -12px 32px rgba(26,48,54,.08)!important;
+ -webkit-backdrop-filter:blur(24px) saturate(160%)!important;
+ backdrop-filter:blur(24px) saturate(160%)!important;
+}
+.mobile-nav button.active span{
+ background:linear-gradient(145deg,rgba(200,79,59,.15),rgba(200,79,59,.07))!important;
+ box-shadow:inset 0 0 0 1px rgba(200,79,59,.1)!important;
+}
+.modal-backdrop.open{background:rgba(16,35,41,.55)!important;-webkit-backdrop-filter:blur(9px) saturate(115%)!important;backdrop-filter:blur(9px) saturate(115%)!important}
+.modal,.atlas-suggest-panel{
+ box-shadow:0 28px 90px rgba(12,31,38,.24),inset 0 1px 0 rgba(255,255,255,.9)!important;
+}
+@media (hover:hover) and (pointer:fine){
+ .card:hover,.stat:hover,.day-card:hover,.decision-card:hover,.table-wrap:hover{
+  box-shadow:0 22px 54px rgba(26,48,54,.105),0 4px 12px rgba(26,48,54,.05)!important;
+  border-color:rgba(200,79,59,.2)!important;
+  transform:translateY(-2px);
+ }
+ .btn.primary:hover,.btn.dark:hover{filter:brightness(1.06);transform:translateY(-1px)}
+}
+@media(max-width:760px){
+ .main{background:transparent!important}
+ .card,.stat,.day-card,.decision-card,.table-wrap,.check-item,.photo-gallery,.place-panel,.route-box{border-radius:17px!important}
+ .page-head h1{font-size:clamp(28px,7vw,36px)!important}
+ .mobile-nav{padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))!important}
+}
+@media(prefers-reduced-motion:reduce){
+ .card,.stat,.day-card,.decision-card,.table-wrap,.btn{transition:none!important}
+}
+</style>
+
 </head>
 <body>
 <div class="app">
