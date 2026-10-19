@@ -880,7 +880,34 @@ function bind(){
  document.getElementById('exportBtn').onclick=exportJson;document.getElementById('importBtn').onclick=openImport;document.getElementById('backupBtn').onclick=exportJson;document.getElementById('exportPlacesCsv').onclick=exportPlaces;document.getElementById('mapExportCsv').onclick=exportPlaces;document.getElementById('exportBudget').onclick=exportBudget;
  document.getElementById('showRemoved').onclick=()=>{state.showRemoved=!state.showRemoved;renderPlaceTable()};
  document.getElementById('budgetCeiling').onchange=e=>{state.ceiling=Math.max(0,+e.target.value||0);save();renderBudgetTotals()};document.getElementById('travellers').onchange=e=>{state.travellers=Math.max(1,+e.target.value||1);save();renderBudgetTotals()};document.getElementById('contingency').onchange=e=>{state.contingency=Math.min(50,Math.max(0,+e.target.value||0));save();renderBudgetTotals()};document.getElementById('tripDays').onchange=e=>{state.tripDays=Math.max(1,+e.target.value||7);save();renderBudgetTotals()};
- document.getElementById('addBudgetItem').onclick=addBudget;document.getElementById('syncPlaceCosts').onclick=()=>{const total=activePlaces().reduce((sum,p)=>sum+(Number(p.cost)||0),0);if(total<=0){toast('Enter place cost estimates in Places first');return}const category=state.budget.find(b=>b.id==='tickets')||state.budget.find(b=>/attraction|ticket/i.test(b.name));if(!category){toast('Add an Attraction tickets category before syncing');return}if(!confirm('Replace '+category.name+' with '+fmt(total)+' from active place cost estimates? This changes that budget category.'))return;category.amount=total;save();renderBudget();renderStats();toast('Attraction budget synced from place estimates')};document.getElementById('resetBudget').onclick=()=>{if(confirm('Reset budget categories to the initial estimates?')){state.budget=structuredClone(initialBudget);state.ceiling=200000;state.travellers=1;state.contingency=10;state.tripDays=9;save();renderBudget()}};
+ document.getElementById('addBudgetItem').onclick=addBudget;document.getElementById('syncPlaceCosts').onclick=()=>{
+ const total=activePlaces().reduce((sum,p)=>sum+(Number(p.cost)||0),0);
+ if(total<=0){toast('Enter place cost estimates in Places first');return}
+ const category=state.budget.find(b=>b.id==='tickets')||state.budget.find(b=>/attraction|ticket/i.test(b.name));
+ if(!category){toast('Add an Attraction tickets category before syncing');return}
+ const previous=Number(category.amount)||0;
+ const overlay=document.createElement('div');
+ overlay.className='modal-backdrop open';
+ overlay.style.cssText='position:fixed;inset:0;z-index:3000;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(17,29,35,.58);backdrop-filter:blur(5px)';
+ overlay.innerHTML=`<section role="dialog" aria-modal="true" aria-labelledby="syncConfirmTitle" style="width:min(100%,420px);background:var(--panel,#fffefa);color:var(--ink,#18313a);border:1px solid var(--line,#e2e5df);border-radius:22px;padding:22px;box-shadow:0 24px 70px #0003">
+  <div style="font-size:10px;letter-spacing:.15em;font-weight:850;color:var(--accent,#c84f3b);text-transform:uppercase;margin-bottom:9px">Budget confirmation</div>
+  <h2 id="syncConfirmTitle" style="font-size:23px;line-height:1.15;margin:0 0 10px">Replace attraction budget?</h2>
+  <p style="font-size:13px;line-height:1.6;color:var(--muted,#5d6d70);margin:0 0 16px">This will replace your current <strong>${esc(category.name)}</strong> allowance with the sum of your place estimates. It will not add a second expense.</p>
+  <div style="display:grid;grid-template-columns:1fr auto;gap:9px 14px;padding:14px;border:1px solid var(--line,#e2e5df);border-radius:14px;background:var(--soft,#f4f4ed);font-size:13px">
+   <span>Current allowance</span><strong>${fmt(previous)}</strong>
+   <span>Place estimates</span><strong>${fmt(total)}</strong>
+   <span style="font-weight:800">Change</span><strong style="color:${total<previous?'#b54736':'#247a59'}">${total<previous?'−': '+'}${fmt(Math.abs(total-previous))}</strong>
+  </div>
+  <p style="font-size:12px;line-height:1.5;color:var(--muted,#5d6d70);margin:13px 0 18px">Your estimates may be incomplete. If you are still planning, keep the current allowance and cancel.</p>
+  <div style="display:flex;gap:9px"><button type="button" data-sync-cancel style="flex:1;border:1px solid var(--line,#d9dfd8);border-radius:12px;background:transparent;color:inherit;padding:12px;font:inherit;font-weight:750">Keep current budget</button><button type="button" data-sync-confirm style="flex:1;border:0;border-radius:12px;background:var(--ink,#18313a);color:white;padding:12px;font:inherit;font-weight:750">Replace budget</button></div>
+ </section>`;
+ const close=()=>overlay.remove();
+ overlay.addEventListener('click',e=>{if(e.target===overlay)close()});
+ overlay.querySelector('[data-sync-cancel]').onclick=close;
+ overlay.querySelector('[data-sync-confirm]').onclick=()=>{category.amount=total;save();renderBudget();renderStats();close();toast('Attraction budget updated from place estimates')};
+ document.body.appendChild(overlay);
+ overlay.querySelector('[data-sync-cancel]').focus();
+};document.getElementById('resetBudget').onclick=()=>{if(confirm('Reset budget categories to the initial estimates?')){state.budget=structuredClone(initialBudget);state.ceiling=200000;state.travellers=1;state.contingency=10;state.tripDays=9;save();renderBudget()}};
  document.getElementById('resetChecklist').onclick=()=>{if(confirm('Reset all checklist items?')){state.checklist.forEach(c=>c.done=false);save();renderChecklist();renderStats()}};
  document.getElementById('printPlan').onclick=()=>window.print();document.getElementById('printChecklist').onclick=()=>window.print();
  document.getElementById('clearAssignments').onclick=()=>{if(confirm('Clear every place day assignment?')){state.places.forEach(p=>p.day='');save();renderAll()}};
