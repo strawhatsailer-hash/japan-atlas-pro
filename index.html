@@ -779,7 +779,7 @@ input:focus,select:focus,textarea:focus{
 }
 </style>
 <link rel="stylesheet" href="./assets/css/atlas-premium.css?v=3" />
-<link rel="stylesheet" href="./assets/css/atlas-studio.css?v=5" />
+<link rel="stylesheet" href="./assets/css/atlas-studio.css?v=4" />
 </head>
 <body>
 <div class="app">
@@ -1356,22 +1356,11 @@ setTimeout(()=>{const p=currentPlace();if(p)loadPlacePhotos(p)},250);
 
 <!-- UX patch: readable white controls and synchronous Google Maps route navigation. Online street tiles still require connectivity. -->
 <script>
-/* Recovery guard: expose fatal startup errors instead of leaving a silent blank page. */
-(function(){
-  function report(message){
-    if(document.getElementById('atlas-startup-error')) return;
-    const box=document.createElement('div');
-    box.id='atlas-startup-error';
-    box.setAttribute('role','alert');
-    box.style.cssText='position:fixed;z-index:2147483647;inset:12px;background:#fffaf2;color:#263b36;border:1px solid #d9cdbb;border-radius:16px;padding:20px;font:14px/1.5 system-ui,sans-serif;overflow:auto;box-shadow:0 12px 40px #10282022';
-    box.innerHTML='<strong style="font-size:18px">Japan Atlas had trouble starting</strong><p style="margin:10px 0">The planner hit a startup error. Your itinerary data has not been intentionally cleared.</p><pre style="white-space:pre-wrap;overflow-wrap:anywhere"></pre><button type="button" style="padding:10px 14px;border-radius:10px;border:1px solid #b9c7be;background:#f2f6f1;color:#20372e;font-weight:700">Reload planner</button>';
-    box.querySelector('pre').textContent=message;
-    box.querySelector('button').addEventListener('click',()=>location.reload());
-    (document.body||document.documentElement).appendChild(box);
-  }
-  window.addEventListener('error',function(e){if(e.message)report(e.message+' ('+(e.filename||'inline script')+':'+(e.lineno||'?')+')')});
-  window.addEventListener('unhandledrejection',function(e){const r=e.reason;report('Async startup error: '+(r&&r.message?r.message:String(r)))});
-})();
+// Progressive Web App shell: the planner can reopen offline after its first successful visit.
+// Live map styles/tiles and external routing are online services and are not claimed to work offline.
+if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
+  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
+}
 </script>
 <script src="./assets/js/atlas-motion.js?v=1"></script>
 </body>
