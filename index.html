@@ -1026,7 +1026,42 @@ h1,h2,h3,.card-title,.stat-value,.day-title,.place-name{color:var(--atlas-p3-ink
  .atlas-stop-options>summary{min-height:36px!important}
  .atlas-stop-options-menu{position:fixed;left:16px;right:16px;bottom:calc(86px + env(safe-area-inset-bottom));top:auto;min-width:0;max-width:360px;margin-left:auto;margin-right:auto}
 }
-</style></head>
+
+/* Phase 3.4.1 — compact empty days and calm stop actions */
+.atlas-itinerary-day.is-empty{box-shadow:0 3px 12px rgba(25,49,48,.035),inset 0 1px #fff!important}
+.atlas-itinerary-day.is-empty .atlas-day-summary{min-height:76px!important;padding-top:11px!important;padding-bottom:11px!important;background:linear-gradient(115deg,rgba(255,255,251,.91),rgba(240,244,235,.67))!important}
+.atlas-itinerary-day.is-empty .atlas-day-heading .day-title{font-family:inherit!important;font-size:16px!important;font-weight:750!important;letter-spacing:-.02em!important}
+.atlas-itinerary-day.is-empty .atlas-day-heading .day-number{font-size:9px}
+.atlas-itinerary-day.is-empty .atlas-day-chevron{top:17px}
+.atlas-day-insights{grid-template-columns:1fr 1fr!important}
+.atlas-day-insight:last-child{grid-column:1/-1!important}
+.atlas-day-edit-title{padding-bottom:8px!important}
+.atlas-day-edit-title .tiny{font-size:10px!important}
+.atlas-day-timeline-label{margin:12px 0 8px!important}
+.atlas-itinerary-stop{padding-bottom:13px!important}
+.atlas-itinerary-stop .timeline-controls{display:none!important}
+.atlas-stop-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;min-height:34px}
+.atlas-stop-actions .atlas-stop-check{min-height:34px!important;padding:5px 10px!important;border-radius:999px!important;font-size:11px!important}
+.atlas-stop-options{position:relative}
+.atlas-stop-options>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;min-height:34px;padding:6px 11px;border-radius:999px;border:1px solid rgba(191,207,191,.56);background:rgba(255,255,252,.76);color:#4f6d61;font-size:11px;font-weight:750}
+.atlas-stop-options>summary::-webkit-details-marker{display:none}
+.atlas-stop-options[open]>summary{background:#e9f0e5}
+.atlas-stop-options-menu{position:absolute;z-index:20;left:0;top:calc(100% + 6px);min-width:156px;display:grid;gap:4px;padding:7px;border:1px solid rgba(190,205,190,.65);border-radius:14px;background:rgba(255,255,251,.98);box-shadow:0 12px 30px rgba(20,47,53,.15);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.atlas-stop-options-menu .btn{justify-content:flex-start!important;text-align:left!important;white-space:nowrap!important;border-color:transparent!important;background:transparent!important;min-height:34px!important;font-size:11px!important}
+.atlas-stop-options-menu .btn:hover{background:#edf2e9!important}
+.atlas-stop-options-menu .atlas-remove-stop{color:#a9503d!important}
+.atlas-stop-cost{margin-left:auto;font-size:11px;font-weight:700;color:#738078;font-variant-numeric:tabular-nums}
+@media(max-width:720px){
+ .atlas-day-insight{padding:9px 10px!important}
+ .atlas-day-insight>span{font-size:8px!important}
+ .atlas-day-insight>strong{font-size:15px!important}
+ .atlas-day-insight:last-child>strong{font-size:12px!important}
+ .atlas-stop-actions{gap:6px!important}
+ .atlas-stop-actions .atlas-stop-check{min-height:36px!important}
+ .atlas-stop-options>summary{min-height:36px!important}
+ .atlas-stop-options-menu{position:fixed;left:16px;right:16px;bottom:calc(86px + env(safe-area-inset-bottom));top:auto;min-width:0;max-width:360px;margin-left:auto;margin-right:auto}
+}
+</head>
 <body>
 <div class="app">
 <header class="topbar">
