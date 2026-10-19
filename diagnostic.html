@@ -1,0 +1,12 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#101a2b"><title>Japan Atlas — Connection Test</title>
+<style>*{box-sizing:border-box}body{margin:0;padding:24px;background:#101a2b;color:#f1f5fb;font:16px/1.55 system-ui,-apple-system,sans-serif}.panel{max-width:680px;margin:4vh auto;padding:24px;border:1px solid #35445b;border-radius:20px;background:#172438}h1{margin:0 0 8px;font-size:26px}p{color:#c2cede}.status{padding:12px;margin:10px 0;border-radius:10px;background:#202f44;overflow-wrap:anywhere}.ok{border-left:4px solid #41d6a0}.bad{border-left:4px solid #ff7187}.pending{border-left:4px solid #ffc76b}a{color:#85c8ff}.small{font-size:13px;color:#9fb0c7}</style></head>
+<body><main class="panel"><h1>Japan Atlas — Connection Test</h1><p>This independent page separates hosting issues from main-app startup issues.</p>
+<div id="own" class="status ok">Diagnostic page loaded successfully. HTML and basic styling are working.</div><div id="index" class="status pending">Checking main app response…</div><div id="assets" class="status pending">Checking startup code…</div><div id="sw" class="status pending">Checking service-worker state…</div>
+<p><a href="./index.html?fresh=20261019">Open Japan Atlas main app</a></p><p class="small">This test does not read or change trip data.</p></main>
+<script>
+(async()=>{const set=(id,c,m)=>{const e=document.getElementById(id);e.className='status '+c;e.textContent=m};
+try{const r=await fetch('./index.html?diagnostic='+Date.now(),{cache:'no-store'});const t=await r.text();set('index',r.ok&&t.includes('<body')?'ok':'bad','Main index: HTTP '+r.status+' · '+t.length.toLocaleString()+' characters · '+(t.includes('<body')?'body tag found':'body tag missing'));const n=(t.match(/<script\b/gi)||[]).length;const core=t.includes('renderAll()');set('assets',r.ok&&core?'ok':'bad','Startup source: '+n+' script tags · '+(core?'renderAll code found':'renderAll code not found'))}catch(e){set('index','bad','Could not fetch main index: '+String(e))}
+try{const regs='serviceWorker'in navigator?await navigator.serviceWorker.getRegistrations():[];set('sw',regs.length?'pending':'ok',regs.length?'Old service-worker registration remains ('+regs.length+').':'No service-worker registrations found.')}catch(e){set('sw','pending','Service-worker status unavailable: '+String(e))}
+})();
+</script></body></html>
