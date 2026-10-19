@@ -893,7 +893,7 @@ function bind(){
   <div style="font-size:10px;letter-spacing:.15em;font-weight:850;color:var(--accent,#c84f3b);text-transform:uppercase;margin-bottom:9px">Budget confirmation</div>
   <h2 id="syncConfirmTitle" style="font-size:23px;line-height:1.15;margin:0 0 10px">Replace attraction budget?</h2>
   <p style="font-size:13px;line-height:1.6;color:var(--muted,#5d6d70);margin:0 0 16px">This will replace your current <strong>${esc(category.name)}</strong> allowance with the sum of your place estimates. It will not add a second expense.</p>
-  <div style="display:grid;grid-template-columns:1fr auto;gap:9px 14px;padding:14px;border:1px solid var(--line,#e2e5df);border-radius:14px;background:var(--soft,#f4f4ed);font-size:13px">
+  <div style="display:grid;grid-template-columns:1fr auto;gap:9px 14px;padding:14px;border:1px solid var(--line,#e2e5df);border-radius:14px;background:#eef3ed;color:#18313a;font-size:13px">
    <span>Current allowance</span><strong>${fmt(previous)}</strong>
    <span>Place estimates</span><strong>${fmt(total)}</strong>
    <span style="font-weight:800">Change</span><strong style="color:${total<previous?'#b54736':'#247a59'}">${total<previous?'−': '+'}${fmt(Math.abs(total-previous))}</strong>
