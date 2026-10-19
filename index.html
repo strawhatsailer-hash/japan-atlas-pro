@@ -435,7 +435,7 @@ html,body{background:var(--bg)!important;color:var(--text)!important}
 </aside>
 <main class="main">
 <section class="section active" id="page-overview">
- <div class="page-head"><div><div class="eyebrow">Your Japan trip, in one place</div><h1>Your Japan trip, beautifully mapped.</h1><div class="subtitle">An editable planning workspace for your tentative late-January 2027 trip. Map, itinerary, decisions and budget stay connected. Nothing here books tickets or confirms availability.</div></div><div class="head-actions"><button class="btn" id="jumpMap">Explore map ↗</button><button class="btn primary" id="continuePlan">Continue planning →</button></div></div>
+ <div class="page-head"><div><div class="eyebrow">Your Japan trip, in one place</div><h1>Your Japan trip, beautifully mapped.</h1><div class="subtitle">An editable planning workspace for your tentative late-January 2027 trip. Map, itinerary, decisions and budget stay connected. Nothing here books tickets or confirms availability.</div></div><div class="head-actions"><button class="btn" id="jumpMap">Explore map ↗</button><button class="btn" id="exportBackupMobile">Export backup ↓</button><button class="btn primary" id="continuePlan">Continue planning →</button></div></div>
  <section class="atlas-route-hero" aria-label="Trip route overview">
   <div class="atlas-route-hero-copy">
    <div class="atlas-route-kicker"><span class="atlas-live-dot"></span> YOUR TRIP WORKSPACE <span class="atlas-route-separator">/</span> JANUARY 2027 · TENTATIVE</div>
@@ -874,7 +874,7 @@ function bind(){
  document.getElementById('dayFocus').addEventListener('change',renderDays);
  document.getElementById('addPlaceTop').onclick=addPlace;document.getElementById('mapAddPlace').onclick=addPlace;document.getElementById('addPlaceRegister').onclick=addPlace;
  document.getElementById('savePlace').onclick=()=>{if(document.getElementById('placeForm').reportValidity())savePlaceForm()};document.getElementById('closeModal').onclick=closePlaceModal;document.getElementById('cancelModal').onclick=closePlaceModal;document.getElementById('deletePlace').onclick=deleteSelectedPlace;
- document.getElementById('jumpMap').onclick=()=>navTo('map');document.getElementById('continuePlan').onclick=()=>navTo('itinerary');
+ document.getElementById('jumpMap').onclick=()=>navTo('map');document.getElementById('exportBackupMobile').onclick=exportJson;document.getElementById('continuePlan').onclick=()=>navTo('itinerary');
  document.getElementById('fitMap').onclick=()=>{setMapFilter('All');renderOfflineMaps();mapLayers.forEach(o=>{let b=o.group.getBounds();if(b.isValid())o.map.fitBounds(b.pad(.12))})};
  document.getElementById('openRoute').onclick=openRoute;
  document.getElementById('exportBtn').onclick=exportJson;document.getElementById('importBtn').onclick=openImport;document.getElementById('backupBtn').onclick=exportJson;document.getElementById('exportPlacesCsv').onclick=exportPlaces;document.getElementById('mapExportCsv').onclick=exportPlaces;document.getElementById('exportBudget').onclick=exportBudget;
