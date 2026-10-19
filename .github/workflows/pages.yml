@@ -31,7 +31,7 @@ jobs:
       - name: Prepare site files
         run: |
           mkdir -p dist
-          cp index.html diagnostic.html manifest.webmanifest icon.svg sw.js dist/
+          cp index.html manifest.webmanifest icon.svg sw.js dist/
           cp places.json dist/
           # Publish the stylesheets linked by index.html.
           mkdir -p dist/assets
