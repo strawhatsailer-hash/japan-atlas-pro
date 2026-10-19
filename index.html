@@ -295,6 +295,30 @@ html,body{background:#f7f8f6!important}
 @media(max-width:390px){.atlas-gallery-rail{grid-auto-columns:minmax(108px,34%);gap:8px}.atlas-gallery-head .photo-gallery-title{font-size:17px!important}.atlas-photo-count{white-space:nowrap}}
 </style>
 
+
+<!-- Release 1 mobile fixes: prevent iOS focus zoom and keep map popups inside the map area. -->
+<style id="release1-mobile-fixes">
+@media (max-width: 720px) {
+  /* iOS Safari/Chrome zooms focused controls below 16px. Keep the real input readable. */
+  .top-search input { font-size: 16px !important; line-height: 1.25 !important; }
+  .top-search:focus-within input { font-size: 16px !important; }
+  /* Long place notes must scroll inside the popup, not spill over the map legend. */
+  .maplibregl-popup { max-width: min(84vw, 320px) !important; }
+  .maplibregl-popup-content {
+    box-sizing: border-box !important;
+    max-height: min(42svh, 360px) !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .maplibregl-popup-content > div { max-width: 100% !important; overflow-wrap: anywhere; }
+  .maplibregl-popup-close-button {
+    position: sticky !important; top: 0; float: right; z-index: 2;
+    background: #fffefa !important; border-radius: 7px;
+  }
+}
+</style>
+
 </head>
 <body>
 <div class="app">

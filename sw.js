@@ -1,4 +1,4 @@
-const CACHE_NAME = 'japan-atlas-shell-v16-mount-fuji-pin-photos';
+const CACHE_NAME = 'japan-atlas-shell-v17-mobile-fixes';
 const APP_SHELL = ['./', './index.html', './manifest.webmanifest', './icon.svg', './places.json'];
 self.addEventListener('install', event => {
   event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(APP_SHELL)).then(() => self.skipWaiting()));
