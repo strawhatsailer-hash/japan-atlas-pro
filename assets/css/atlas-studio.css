@@ -359,3 +359,94 @@ input,select,textarea{
   background:#fffdf7!important;outline:none!important;backdrop-filter:none!important;-webkit-backdrop-filter:none!important;
  }
 }
+
+
+/* Phase 3.3 — signature hero and dashboard polish */
+#page-overview .page-head{
+ background:
+  radial-gradient(ellipse at 100% 0%,rgba(184,218,190,.58),transparent 58%),
+  radial-gradient(ellipse at 0% 100%,rgba(247,216,198,.45),transparent 56%),
+  linear-gradient(135deg,rgba(255,255,251,.97),rgba(240,247,237,.91))!important;
+ border:1px solid rgba(255,255,255,.98)!important;
+ outline:1px solid rgba(179,200,183,.5);
+ box-shadow:0 26px 58px rgba(18,48,53,.105),0 5px 14px rgba(18,48,53,.035),inset 0 1px 0 #fff!important;
+}
+#page-overview .page-head:before{
+ content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background:linear-gradient(112deg,rgba(255,255,255,.38),transparent 43%,rgba(255,255,255,.18));
+}
+#page-overview .page-head h1{
+ color:#102d33!important;font-weight:950!important;
+ letter-spacing:-.065em!important;
+ text-shadow:0 1px 0 rgba(255,255,255,.8)!important;
+}
+#page-overview .page-head .eyebrow{color:#a74334!important}
+#page-overview .page-head .subtitle{color:#536b65!important}
+#page-overview .atlas-route-hero{
+ border:1px solid rgba(255,255,255,.52)!important;
+ box-shadow:0 30px 68px rgba(12,42,49,.26),0 7px 20px rgba(12,42,49,.12),inset 0 1px rgba(255,255,255,.32)!important;
+ background-image:
+  linear-gradient(100deg,rgba(8,29,35,.94) 0%,rgba(12,39,44,.81) 44%,rgba(13,44,47,.24) 100%),
+  url("https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=2000&q=85")!important;
+}
+#page-overview .atlas-route-hero:before{
+ display:block!important;content:"";position:absolute;inset:0;z-index:0;pointer-events:none;
+ background:radial-gradient(ellipse at 82% 0%,rgba(172,215,187,.23),transparent 44%),linear-gradient(180deg,rgba(255,255,255,.1),transparent 25%,rgba(4,20,25,.12))!important;
+}
+#page-overview .atlas-route-hero>*{position:relative;z-index:1}
+#page-overview .atlas-route-hero h2{
+ color:#fffdf6!important;
+ text-shadow:0 2px 1px rgba(0,0,0,.16),0 8px 28px rgba(0,0,0,.24)!important;
+}
+#page-overview .atlas-route-track{
+ background:linear-gradient(145deg,rgba(255,255,250,.94),rgba(238,246,235,.83))!important;
+ border:1px solid rgba(255,255,255,.88)!important;
+ box-shadow:0 22px 58px rgba(3,21,25,.24),inset 0 1px 0 #fff!important;
+}
+#page-overview .atlas-route-actions .atlas-route-button{
+ box-shadow:0 7px 18px rgba(4,24,28,.12),inset 0 1px rgba(255,255,255,.5)!important;
+}
+#page-overview .atlas-route-actions .atlas-route-button.primary{
+ background:linear-gradient(125deg,#e7eee1,#cbdcc9)!important;color:#173b3e!important;
+ border:1px solid rgba(255,255,255,.88)!important;
+}
+#page-overview .atlas-phase3-head h2{
+ color:#102d33!important;font-weight:950!important;
+}
+.atlas-phase3-panel-top{margin-bottom:18px!important}
+.atlas-phase3-panel{position:relative;overflow:hidden}
+.atlas-phase3-panel:before{
+ content:"";position:absolute;inset:0 0 auto;height:1px;pointer-events:none;
+ background:linear-gradient(90deg,transparent,rgba(255,255,255,.98),transparent);
+}
+.atlas-phase3-journey{box-shadow:0 18px 38px rgba(38,92,70,.09),inset 0 1px 0 #fff!important}
+.atlas-phase3-days{box-shadow:0 18px 38px rgba(119,85,61,.075),inset 0 1px 0 #fff!important}
+.atlas-phase3-budget{box-shadow:0 18px 38px rgba(38,92,70,.08),inset 0 1px 0 #fff!important}
+.atlas-phase3-day{background:linear-gradient(145deg,rgba(255,255,253,.92),rgba(241,246,237,.78))!important}
+.atlas-phase3-day.is-done{box-shadow:0 5px 13px rgba(62,125,86,.09),inset 0 1px #fff!important}
+.atlas-phase3-orb,.atlas-phase3-mini-icon{
+ background:linear-gradient(145deg,rgba(231,242,226,.98),rgba(255,255,255,.9))!important;
+ border-color:rgba(255,255,255,.99)!important;
+}
+@media(max-width:760px){
+ #page-overview .page-head{
+  padding:24px 17px!important;
+  box-shadow:0 18px 40px rgba(18,48,53,.085),inset 0 1px #fff!important;
+ }
+ #page-overview .page-head h1{
+  font-size:clamp(36px,9vw,46px)!important;
+  line-height:.99!important;letter-spacing:-.06em!important;
+  max-width:11ch!important;
+ }
+ #page-overview .page-head .subtitle{line-height:1.65!important}
+ #page-overview .atlas-route-hero{
+  min-height:0!important;padding:22px 17px!important;border-radius:23px!important;
+  background-position:center!important;
+ }
+ #page-overview .atlas-route-hero h2{font-size:clamp(32px,8.4vw,43px)!important}
+ #page-overview .atlas-route-track{padding:15px 12px!important;border-radius:18px!important}
+ .atlas-phase3{outline-offset:0!important}
+}
+@media(prefers-reduced-transparency:reduce){
+ #page-overview .page-head,#page-overview .atlas-route-track{backdrop-filter:none!important;-webkit-backdrop-filter:none!important}
+}
