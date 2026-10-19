@@ -928,6 +928,104 @@ h1,h2,h3,.card-title,.stat-value,.day-title,.place-name{color:var(--atlas-p3-ink
  .atlas-itinerary-stop .timeline-controls .btn.small{min-height:35px!important}
 }
 @media(prefers-reduced-motion:reduce){.atlas-itinerary-day,.atlas-day-chevron{transition:none!important}}
+<style id="atlas-phase34-itinerary">
+#page-itinerary #dayGrid{display:grid;gap:13px}
+.atlas-itinerary-day{overflow:hidden;border-radius:22px!important;transition:box-shadow .2s ease,border-color .2s ease}
+.atlas-day-summary{display:flex!important;align-items:center;justify-content:space-between;gap:12px;padding:17px 16px!important;cursor:pointer;list-style:none;min-height:106px;background:linear-gradient(125deg,rgba(255,255,251,.96),rgba(233,241,231,.76))!important;border:0!important}
+.atlas-day-summary::-webkit-details-marker{display:none}
+.atlas-day-heading{display:flex;flex-direction:column;align-items:flex-start;gap:4px;min-width:0}
+.atlas-day-heading .day-number{font-size:10px;letter-spacing:.16em;color:#a9503d;font-weight:850}
+.atlas-day-heading .day-title{font-family:Georgia,"Iowan Old Style",serif;font-size:clamp(21px,4.5vw,27px);font-weight:700;line-height:1.12;letter-spacing:-.035em;color:#17353a;overflow-wrap:anywhere}
+.atlas-day-destination{font-size:11px;color:#738078;line-height:1.4}
+.atlas-day-summary-side{position:relative;display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0;min-width:78px;padding-right:18px}
+.atlas-day-summary-side>strong{font-size:15px;color:#18383b}
+.atlas-day-summary-side>strong small{font-size:10px;font-weight:600;color:#75817a}
+.atlas-day-done{font-size:10px;color:#75817a}
+.atlas-day-progress{display:block;width:76px;height:4px;margin:2px 0 0;border-radius:99px;background:#dfe7df;overflow:hidden}
+.atlas-day-progress>span{display:block;height:100%;background:linear-gradient(90deg,#588c76,#9ac3a6);border-radius:inherit}
+.atlas-day-chevron{position:absolute;right:0;top:26px;font-size:23px;font-weight:400;color:#73857a;transition:transform .18s ease}
+.atlas-itinerary-day[open] .atlas-day-chevron{transform:rotate(180deg)}
+.atlas-day-content{padding:15px!important;border-top:1px solid rgba(190,205,190,.4)}
+.atlas-day-insights{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px}
+.atlas-day-insight{padding:11px 12px;border-radius:13px;background:linear-gradient(145deg,rgba(242,246,238,.94),rgba(255,255,252,.86));border:1px solid rgba(204,215,199,.32);min-width:0}
+.atlas-day-insight>span{display:block;font-size:9px;letter-spacing:.09em;color:#7b8980;font-weight:800;line-height:1.4}
+.atlas-day-insight>strong{display:block;font-size:17px;line-height:1.35;margin-top:4px;color:#18383b;overflow-wrap:anywhere}
+.atlas-day-insight>small{font-size:10px;color:#78847d}
+.atlas-day-insight:last-child{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.atlas-day-insight:last-child>strong{font-size:13px;margin:0}
+.atlas-day-load{margin:0 0 14px!important}
+.atlas-day-load>span{display:none}
+.atlas-day-load-bar{height:4px!important;background:#e5e9df!important}
+.atlas-day-load-bar span{border-radius:99px!important}
+.atlas-day-edit-title{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 0 12px;border-bottom:1px solid rgba(190,205,190,.38)}
+.atlas-day-edit-title .tiny{font-size:11px;color:#79867e}
+.atlas-day-timeline-label{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:15px 0 10px;font-size:10px;letter-spacing:.1em;font-weight:850;color:#4f6d61}
+.atlas-day-timeline-label span+span{font-size:10px;letter-spacing:0;font-weight:600;color:#839087;text-align:right}
+.atlas-refined-timeline{margin:0!important;padding:0!important}
+.atlas-itinerary-stop{padding:0 0 17px!important;margin:0!important}
+.atlas-itinerary-stop:last-child{padding-bottom:3px!important}
+.atlas-itinerary-stop .time{font-size:10px!important;color:#87938b!important;font-variant-numeric:tabular-nums}
+.atlas-itinerary-stop .timeline-dot{box-shadow:0 0 0 4px rgba(116,154,130,.12)!important}
+.atlas-stop-main{min-width:0}
+.atlas-itinerary-stop .timeline-name{font-size:14px!important;font-weight:780!important;line-height:1.35;color:#1b383d}
+.atlas-itinerary-stop .timeline-meta{font-size:11px!important;line-height:1.5;color:#7a8980!important;margin-top:3px}
+.atlas-itinerary-stop .timeline-meta span{color:#b1b9ae}
+.atlas-itinerary-stop .timeline-controls{display:flex;align-items:center;flex-wrap:wrap;gap:6px;margin-top:8px}
+.atlas-itinerary-stop .timeline-controls .btn.small{font-size:10px!important;min-height:32px!important;padding:6px 9px!important;border-radius:10px!important}
+.atlas-itinerary-stop .atlas-stop-check{min-height:32px!important;border-color:rgba(191,207,191,.6)!important;background:rgba(238,245,235,.72)!important}
+.atlas-itinerary-stop.is-complete .timeline-name{color:#718078!important}
+.atlas-day-empty{display:flex;flex-direction:column;gap:5px;padding:18px!important;color:#718078}
+.atlas-day-empty strong{color:#23454a}
+.atlas-day-footer{margin-top:14px!important;padding-top:12px;border-top:1px solid rgba(190,205,190,.35)}
+.atlas-day-footnote{font-size:10px;line-height:1.5;color:#879087;margin:12px 0 0}
+@media(max-width:720px){
+ #page-itinerary #dayGrid{gap:10px}
+ .atlas-day-summary{padding:14px 12px!important;min-height:94px}
+ .atlas-day-heading .day-title{font-size:22px}
+ .atlas-day-summary-side{min-width:68px;padding-right:16px}
+ .atlas-day-progress{width:64px}
+ .atlas-day-content{padding:12px!important}
+ .atlas-day-insight{padding:10px}
+ .atlas-day-insight>strong{font-size:16px}
+ .atlas-itinerary-stop .timeline-controls{gap:5px}
+ .atlas-itinerary-stop .timeline-controls .btn.small{min-height:35px!important}
+}
+@media(prefers-reduced-motion:reduce){.atlas-itinerary-day,.atlas-day-chevron{transition:none!important}}
+
+/* Phase 3.4.1 — compact empty days and calm stop actions */
+.atlas-itinerary-day.is-empty{box-shadow:0 3px 12px rgba(25,49,48,.035),inset 0 1px #fff!important}
+.atlas-itinerary-day.is-empty .atlas-day-summary{min-height:76px!important;padding-top:11px!important;padding-bottom:11px!important;background:linear-gradient(115deg,rgba(255,255,251,.91),rgba(240,244,235,.67))!important}
+.atlas-itinerary-day.is-empty .atlas-day-heading .day-title{font-family:inherit!important;font-size:16px!important;font-weight:750!important;letter-spacing:-.02em!important}
+.atlas-itinerary-day.is-empty .atlas-day-heading .day-number{font-size:9px}
+.atlas-itinerary-day.is-empty .atlas-day-chevron{top:17px}
+.atlas-day-insights{grid-template-columns:1fr 1fr!important}
+.atlas-day-insight:last-child{grid-column:1/-1!important}
+.atlas-day-edit-title{padding-bottom:8px!important}
+.atlas-day-edit-title .tiny{font-size:10px!important}
+.atlas-day-timeline-label{margin:12px 0 8px!important}
+.atlas-itinerary-stop{padding-bottom:13px!important}
+.atlas-itinerary-stop .timeline-controls{display:none!important}
+.atlas-stop-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;min-height:34px}
+.atlas-stop-actions .atlas-stop-check{min-height:34px!important;padding:5px 10px!important;border-radius:999px!important;font-size:11px!important}
+.atlas-stop-options{position:relative}
+.atlas-stop-options>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:7px;min-height:34px;padding:6px 11px;border-radius:999px;border:1px solid rgba(191,207,191,.56);background:rgba(255,255,252,.76);color:#4f6d61;font-size:11px;font-weight:750}
+.atlas-stop-options>summary::-webkit-details-marker{display:none}
+.atlas-stop-options[open]>summary{background:#e9f0e5}
+.atlas-stop-options-menu{position:absolute;z-index:20;left:0;top:calc(100% + 6px);min-width:156px;display:grid;gap:4px;padding:7px;border:1px solid rgba(190,205,190,.65);border-radius:14px;background:rgba(255,255,251,.98);box-shadow:0 12px 30px rgba(20,47,53,.15);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px)}
+.atlas-stop-options-menu .btn{justify-content:flex-start!important;text-align:left!important;white-space:nowrap!important;border-color:transparent!important;background:transparent!important;min-height:34px!important;font-size:11px!important}
+.atlas-stop-options-menu .btn:hover{background:#edf2e9!important}
+.atlas-stop-options-menu .atlas-remove-stop{color:#a9503d!important}
+.atlas-stop-cost{margin-left:auto;font-size:11px;font-weight:700;color:#738078;font-variant-numeric:tabular-nums}
+@media(max-width:720px){
+ .atlas-day-insight{padding:9px 10px!important}
+ .atlas-day-insight>span{font-size:8px!important}
+ .atlas-day-insight>strong{font-size:15px!important}
+ .atlas-day-insight:last-child>strong{font-size:12px!important}
+ .atlas-stop-actions{gap:6px!important}
+ .atlas-stop-actions .atlas-stop-check{min-height:36px!important}
+ .atlas-stop-options>summary{min-height:36px!important}
+ .atlas-stop-options-menu{position:fixed;left:16px;right:16px;bottom:calc(86px + env(safe-area-inset-bottom));top:auto;min-width:0;max-width:360px;margin-left:auto;margin-right:auto}
+}
 </style></head>
 <body>
 <div class="app">
@@ -1424,37 +1522,35 @@ function moveDayStop(id,direction){const p=state.places.find(x=>x.id===id);if(!p
 function renderDays(){
  let focus=document.getElementById('dayFocus')?.value||'all';
  let days=Object.keys(state.dayTitles).filter(n=>focus==='all'||n===focus);
- if(!window.__atlasExpandedDays)window.__atlasExpandedDays=new Set(days.length? [String(days[0])] : []);
+ if(!window.__atlasExpandedDays)window.__atlasExpandedDays=new Set(days.length?[String(days.find(n=>activePlaces().some(p=>String(p.day)===String(n)))||days[0])]:[]);
  const root=document.getElementById('dayGrid');if(!root)return;
  root.innerHTML=days.map(n=>{
   let assigned=activePlaces().filter(p=>String(p.day)===String(n)).sort((a,b)=>(Number.isFinite(a.dayOrder)?a.dayOrder:state.places.indexOf(a)*10)-(Number.isFinite(b.dayOrder)?b.dayOrder:state.places.indexOf(b)*10));
   let total=assigned.reduce((sum,p)=>sum+(+p.duration||0),0),placeCost=assigned.reduce((sum,p)=>sum+(+p.cost||0),0),load=Math.min(100,Math.round(total/480*100));
   let completed=assigned.filter(p=>p.dayCompleted===true).length,progress=assigned.length?Math.round(completed/assigned.length*100):0;
   const expanded=window.__atlasExpandedDays.has(String(n));
-  const loadLabel=total>480?'Packed day':total>360?'Full day':total?'Comfortable pace':'No visit time yet';
-  return `<details class="card day-card atlas-itinerary-day" data-itinerary-day="${esc(n)}" ${expanded?'open':''} ontoggle="if(!window.__atlasExpandedDays)window.__atlasExpandedDays=new Set();this.open?window.__atlasExpandedDays.add('${esc(n)}'):window.__atlasExpandedDays.delete('${esc(n)}')">
+  const loadLabel=total>480?'Packed':total>360?'Full':total?'Comfortable':'Not planned';
+  return `<details class="card day-card atlas-itinerary-day ${assigned.length?'has-stops':'is-empty'}" data-itinerary-day="${esc(n)}" ${expanded?'open':''} ontoggle="if(!window.__atlasExpandedDays)window.__atlasExpandedDays=new Set();this.open?window.__atlasExpandedDays.add('${esc(n)}'):window.__atlasExpandedDays.delete('${esc(n)}')">
    <summary class="day-banner atlas-day-summary">
-    <div class="atlas-day-heading"><span class="day-number">DAY ${esc(n)}</span><span class="day-title">${esc(state.dayTitles[n])}</span><span class="atlas-day-destination">${assigned.length?esc([...new Set(assigned.map(p=>p.area))].join(' · ')):'No destinations assigned'}</span></div>
-    <div class="atlas-day-summary-side"><strong>${assigned.length} <small>stops</small></strong><span class="atlas-day-done">${completed}/${assigned.length} visited</span><span class="atlas-day-progress"><span style="width:${progress}%"></span></span><span class="atlas-day-chevron" aria-hidden="true">⌄</span></div>
+    <div class="atlas-day-heading"><span class="day-number">DAY ${esc(n)} · ${assigned.length?esc([...new Set(assigned.map(p=>p.area))].join(' · ')):'OPEN DAY'}</span><span class="day-title">${esc(state.dayTitles[n])}</span><span class="atlas-day-destination">${assigned.length?completed===assigned.length?'All stops visited':(assigned.length-completed)+' stops to explore':'Add places when you are ready'}</span></div>
+    <div class="atlas-day-summary-side"><strong>${assigned.length} <small>stops</small></strong>${assigned.length?`<span class="atlas-day-done">${completed}/${assigned.length} done</span><span class="atlas-day-progress"><span style="width:${progress}%"></span></span>`:''}<span class="atlas-day-chevron" aria-hidden="true">⌄</span></div>
    </summary>
    <div class="card-body atlas-day-content">
-    <div class="atlas-day-insights">
-     <div class="atlas-day-insight"><span>PLANNED VISIT TIME</span><strong>${Math.floor(total/60)}h ${total%60?total%60+'m':'00m'}</strong></div>
-     <div class="atlas-day-insight"><span>PLACE ESTIMATES</span><strong>${fmt(placeCost)}</strong></div>
+    ${assigned.length?`<div class="atlas-day-insights">
+     <div class="atlas-day-insight"><span>VISIT TIME</span><strong>${Math.floor(total/60)}h ${total%60?total%60+'m':'00m'}</strong></div>
+     <div class="atlas-day-insight"><span>PLACE COST ESTIMATE</span><strong>${fmt(placeCost)}</strong></div>
      <div class="atlas-day-insight"><span>DAY PACE</span><strong>${loadLabel}</strong><small>${load}% of 8h visit time</small></div>
-    </div>
-    <div class="atlas-day-load" aria-label="Estimated visit load"><div class="atlas-day-load-bar"><span style="width:${load}%;background:${total>480?'#b95b47':total>360?'#b99a5a':'#6c9b83'}"></span></div></div>
-    <div class="atlas-day-edit-title"><span class="tiny">Day title</span><button class="btn small" type="button" onclick="event.stopPropagation();editDayTitle('${esc(n)}')">Edit title</button></div>
-    <div class="atlas-day-timeline-label"><span>YOUR STOPS</span><span>${assigned.length?completed===assigned.length?'All stops visited':(assigned.length-completed)+' left to visit':'Build your day'}</span></div>
+    </div><div class="atlas-day-load" aria-label="Estimated visit load"><div class="atlas-day-load-bar"><span style="width:${load}%;background:${total>480?'#b95b47':total>360?'#b99a5a':'#6c9b83'}"></span></div></div>` : ''}
+    <div class="atlas-day-edit-title"><span class="tiny">${assigned.length?'Your itinerary':'Make this day your own'}</span><button class="btn small" type="button" onclick="event.preventDefault();event.stopPropagation();editDayTitle('${esc(n)}')">Edit title</button></div>
+    <div class="atlas-day-timeline-label"><span>${assigned.length?'YOUR STOPS':'START PLANNING'}</span><span>${assigned.length?completed===assigned.length?'All done':(assigned.length-completed)+' remaining':'Add a place to begin'}</span></div>
     <div class="timeline atlas-refined-timeline">${assigned.length?assigned.map((p,i)=>`<div class="timeline-item atlas-itinerary-stop ${p.dayCompleted?'is-complete':''}">
-      <div class="time">${String(9+Math.floor(i*1.5)).padStart(2,'0')}:${i%2?'30':'00'}</div>
-      <div class="timeline-dot" style="background:${areaColor(p.area,p.status)}"></div>
-      <div class="atlas-stop-main"><div class="timeline-name">${esc(p.name)}</div><div class="timeline-meta">${esc(p.area)} <span>·</span> ${p.duration||0} min <span>·</span> ${fmt(p.cost)}</div>
-       <div class="timeline-controls"><label class="atlas-stop-check"><input type="checkbox" aria-label="Mark ${esc(p.name)} visited" ${p.dayCompleted?'checked':''} onchange="toggleDayStop('${p.id}',this.checked)"><span>Visited</span></label><button class="btn small" onclick="selectPlace('${p.id}',true)">Map</button><button class="btn small" onclick="editPlace('${p.id}')">Edit</button><button class="btn small" onclick="changeDay('${p.id}','')">Remove from day</button><span class="atlas-day-order"><button class="btn small" aria-label="Move ${esc(p.name)} earlier" title="Move earlier" onclick="moveDayStop('${p.id}',-1)" ${i===0?'disabled':''}>↑</button><button class="btn small" aria-label="Move ${esc(p.name)} later" title="Move later" onclick="moveDayStop('${p.id}',1)" ${i===assigned.length-1?'disabled':''}>↓</button></span></div>
+      <div class="time">${String(9+Math.floor(i*1.5)).padStart(2,'0')}:${i%2?'30':'00'}</div><div class="timeline-dot" style="background:${areaColor(p.area,p.status)}"></div>
+      <div class="atlas-stop-main"><div class="timeline-name">${esc(p.name)}</div><div class="timeline-meta">${esc(p.area)} <span>·</span> ${p.duration||0} min</div>
+       <div class="atlas-stop-actions"><label class="atlas-stop-check"><input type="checkbox" aria-label="Mark ${esc(p.name)} visited" ${p.dayCompleted?'checked':''} onchange="toggleDayStop('${p.id}',this.checked)"><span>${p.dayCompleted?'Visited':'Mark visited'}</span></label><details class="atlas-stop-options"><summary aria-label="More actions for ${esc(p.name)}">More <span aria-hidden="true">⌄</span></summary><div class="atlas-stop-options-menu"><button class="btn small" onclick="selectPlace('${p.id}',true)">Show on map</button><button class="btn small" onclick="editPlace('${p.id}')">Edit stop</button><button class="btn small" onclick="moveDayStop('${p.id}',-1)" ${i===0?'disabled':''}>Move earlier</button><button class="btn small" onclick="moveDayStop('${p.id}',1)" ${i===assigned.length-1?'disabled':''}>Move later</button><button class="btn small atlas-remove-stop" onclick="changeDay('${p.id}','')">Remove from day</button></div></details><span class="atlas-stop-cost">${fmt(p.cost)}</span></div>
       </div>
-     </div>`).join(''):'<div class="empty atlas-day-empty"><strong>A day waiting to be planned</strong><span>Add existing places to build this day.</span></div>'}</div>
+     </div>`).join(''):'<div class="empty atlas-day-empty"><strong>A little room for discovery</strong><span>Add existing places when you are ready to plan this day.</span></div>'}</div>
     <div class="timeline-controls atlas-day-footer"><button class="btn small primary" onclick="openAssignModal('${esc(n)}')">＋ Add a stop</button><button class="btn small" onclick="navTo('places')">Browse places</button></div>
-    <p class="atlas-day-footnote">Visit estimates exclude travel, queues, meals and breaks. Place costs are editable estimates, not live quotes.</p>
+    ${assigned.length?'<p class="atlas-day-footnote">Visit times exclude travel, queues and breaks. Costs are estimates.</p>':''}
    </div>
   </details>`;
  }).join('');
