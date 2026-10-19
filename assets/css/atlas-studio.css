@@ -48,7 +48,7 @@ body{
  padding:clamp(24px,3.5vw,44px)!important;gap:clamp(18px,2.6vw,34px)!important;
  border:1px solid rgba(255,255,255,.38)!important;border-radius:28px!important;
  background-color:#18363e!important;
- background-image:linear-gradient(100deg,rgba(12,34,40,.92) 0%,rgba(12,34,40,.78) 42%,rgba(12,34,40,.2) 100%),url("https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=1400&q=75")!important;
+ background-image:linear-gradient(100deg,rgba(12,34,40,.92) 0%,rgba(12,34,40,.78) 42%,rgba(12,34,40,.2) 100%),url("https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=2000&q=85")!important;
  background-size:cover!important;background-position:center 48%!important;
  box-shadow:0 24px 58px rgba(18,48,54,.2),inset 0 1px rgba(255,255,255,.25)!important;
 }
@@ -125,7 +125,7 @@ input:focus,select:focus,textarea:focus{border-color:#8aa99b!important;box-shado
  #page-overview .head-actions{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
  #page-overview .head-actions .btn{min-width:0;white-space:normal;padding:10px 8px!important;font-size:12px!important}
  #page-overview .head-actions .btn:last-child{grid-column:1/-1}
- #page-overview .atlas-route-hero{background-image:linear-gradient(100deg,rgba(13,34,41,.94) 0%,rgba(13,34,41,.82) 40%,rgba(13,34,41,.22) 100%),url("https://images.unsplash.com/photo-1493976040374-85c8e12f0c0e?auto=format&fit=crop&w=900&q=70")!important;min-height:0!important;grid-template-columns:minmax(0,1fr)!important;padding:25px 15px 16px!important;gap:18px!important;border-radius:22px!important;background-position:58% center!important}
+ #page-overview .atlas-route-hero{min-height:0!important;grid-template-columns:minmax(0,1fr)!important;padding:25px 15px 16px!important;gap:18px!important;border-radius:22px!important;background-position:58% center!important}
  #page-overview .atlas-route-hero h2{font-size:clamp(37px,10vw,49px)!important;max-width:12ch}
  #page-overview .atlas-route-hero-copy p{font-size:13px!important;max-width:33ch}
  #page-overview .atlas-route-actions{display:grid!important;grid-template-columns:1fr!important;gap:8px!important}
@@ -159,94 +159,4 @@ input:focus,select:focus,textarea:focus{border-color:#8aa99b!important;box-shado
 @media(max-width:760px){
  .mobile-nav>button{font-size:9px!important;padding:7px 1px!important}
  .mobile-nav>button>span{font-size:16px!important}
-}
-
-
-/* Japan Atlas premium refinement — editorial typography, quiet motion, accessible contrast. */
-:root{
- --atlas-ink:#18343b;
- --atlas-ivory:#f7f5ee;
- --atlas-paper:#fffdf8;
- --atlas-teal:#18343b;
- --atlas-coral:#c7503d;
- --atlas-sage:#e4ece2;
- --atlas-line:#d8dfd5;
- --atlas-shadow-soft:0 10px 28px rgba(24,52,59,.055);
- --atlas-shadow-lift:0 16px 36px rgba(24,52,59,.11);
- --atlas-ease:cubic-bezier(.2,.7,.2,1);
-}
-html,body{font-family:"DM Sans",ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif!important}
-h1,h2,h3,h4,.page-head h1,.card-title,.day-title,.place-name,.atlas-route-hero h2{
- font-family:"Manrope","DM Sans",ui-sans-serif,system-ui,sans-serif!important;
- font-optical-sizing:auto;
-}
-h1,h2,h3,h4{font-weight:800;letter-spacing:-.035em}
-.page-head h1{font-weight:800!important;letter-spacing:-.045em!important;line-height:1.06!important}
-#page-overview .page-head h1{font-weight:800!important;letter-spacing:-.052em!important;line-height:1.015!important}
-#page-overview .atlas-route-hero h2{font-weight:800!important;letter-spacing:-.05em!important;line-height:1.02!important}
-.card-title,.place-name,.day-title{font-weight:750!important;letter-spacing:-.025em}
-.subtitle,.card-sub,.footer-note,.detail-line .value{line-height:1.7}
-.eyebrow,.atlas-overline,.atlas-route-kicker{letter-spacing:1.6px!important}
-:where(.card,.stat,.day-card,.decision-card,.check-item,.place-panel,.budget-total,.budget-items,.budget-split,.place-list-row){
- transition:box-shadow .22s var(--atlas-ease),border-color .22s var(--atlas-ease),background-color .22s var(--atlas-ease),transform .22s var(--atlas-ease);
-}
-.btn,.atlas-btn,.atlas-route-button,.mobile-nav>button{
- -webkit-tap-highlight-color:transparent;
- transition:transform .18s var(--atlas-ease),box-shadow .2s var(--atlas-ease),background-color .2s var(--atlas-ease),color .2s var(--atlas-ease),border-color .2s var(--atlas-ease)!important;
-}
-.btn:active,.atlas-btn:active,.atlas-route-button:active,.mobile-nav>button:active{transform:scale(.975)!important}
-.btn:focus-visible,.atlas-btn:focus-visible,.atlas-route-button:focus-visible,.mobile-nav>button:focus-visible{
- outline:3px solid rgba(199,80,61,.62)!important;outline-offset:3px!important
-}
-.card:hover,.stat:hover,.day-card:hover,.decision-card:hover,.place-panel:hover{
- box-shadow:var(--atlas-shadow-soft),inset 0 1px rgba(255,255,255,.95)!important
-}
-.place-list-row.is-selected{
- background:linear-gradient(105deg,#f7e7df,#fffaf2)!important;
- border-color:#e6c5b8!important;
- box-shadow:inset 3px 0 var(--atlas-coral),0 6px 18px rgba(24,52,59,.05)!important;
-}
-.budget-total .big,#budgetBig,#statBudget,#budgetPerPerson{font-variant-numeric:tabular-nums lining-nums}
-#budgetProgress,.progress span,.bar span,#pulseAssignedBar{transition:width .62s var(--atlas-ease)!important}
-.atlas-number-updated{animation:atlas-number-settle .42s var(--atlas-ease) both}
-.atlas-check-feedback{animation:atlas-check-pop .34s var(--atlas-ease) both}
-.atlas-stop-selected{
- z-index:30!important;
- filter:drop-shadow(0 0 0 rgba(199,80,61,0)) drop-shadow(0 4px 7px rgba(15,39,43,.32));
-}
-.atlas-stop-selected::after{content:"";position:absolute;inset:-7px;border:2px solid #c7503d;border-radius:50%;animation:atlas-pin-pulse 1.8s ease-out infinite;pointer-events:none}
-.atlas-route-line{transition:opacity .45s var(--atlas-ease)}
-.section.atlas-section-enter{animation:atlas-section-in .42s var(--atlas-ease) both}
-.section.atlas-section-enter .card,
-.section.atlas-section-enter .stat,
-.section.atlas-section-enter .day-card,
-.section.atlas-section-enter .place-panel{
- animation:atlas-card-in .42s var(--atlas-ease) both;
-}
-.section.atlas-section-enter .card:nth-of-type(2),
-.section.atlas-section-enter .day-card:nth-of-type(2),
-.section.atlas-section-enter .stat:nth-of-type(2){animation-delay:45ms}
-.section.atlas-section-enter .card:nth-of-type(3),
-.section.atlas-section-enter .day-card:nth-of-type(3),
-.section.atlas-section-enter .stat:nth-of-type(3){animation-delay:85ms}
-.section.atlas-section-enter .card:nth-of-type(4),
-.section.atlas-section-enter .day-card:nth-of-type(4),
-.section.atlas-section-enter .stat:nth-of-type(4){animation-delay:125ms}
-@keyframes atlas-section-in{from{opacity:.72;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
-@keyframes atlas-card-in{from{opacity:.55;transform:translateY(7px)}to{opacity:1;transform:translateY(0)}}
-@keyframes atlas-number-settle{0%{opacity:.62;transform:translateY(3px)}100%{opacity:1;transform:translateY(0)}}
-@keyframes atlas-check-pop{0%{transform:scale(.985)}55%{transform:scale(1.012)}100%{transform:scale(1)}}
-@keyframes atlas-pin-pulse{0%{transform:scale(.82);opacity:.8}100%{transform:scale(1.55);opacity:0}}
-@media(hover:hover) and (pointer:fine){
- .place-list-row:hover,.check-item:hover{transform:translateY(-2px)}
- .mobile-nav>button:hover{transform:translateY(-2px)}
-}
-@media(prefers-reduced-motion:reduce){
- *,*::before,*::after{animation:none!important;scroll-behavior:auto!important;transition:none!important}
- .atlas-stop-selected::after{display:none!important}
-}
-@media(prefers-contrast:more){
- :root{--muted:#4c625d}
- .subtitle,.card-sub,.stat-note,.tiny,.footer-note{color:#4b615c!important}
- .card,.stat,.day-card,.decision-card,.check-item,.place-panel,.place-list-row{border-color:#8c9b91!important}
 }
