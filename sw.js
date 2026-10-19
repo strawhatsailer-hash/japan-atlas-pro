@@ -43,10 +43,8 @@ self.addEventListener('fetch', event => {
       clearTimeout(timeout);
       if (result && result.ok) return result;
       if (cached) return cached;
-      try {
-        const late = await network;
-        if (late && late.ok) return late;
-      } catch (_) {}
+      // Do not await a stalled request when there is no cache (e.g. first private-tab visit).
+      // Return a visible recovery page immediately; the user can retry once connectivity recovers.
       return new Response('<!doctype html><meta name="viewport" content="width=device-width,initial-scale=1"><title>Japan Atlas</title><main style="font:16px system-ui;padding:24px;color:#18343b"><h1>Japan Atlas</h1><p>The planner could not connect just now. Check your connection and reload.</p><button onclick="location.reload()">Reload planner</button></main>', {headers:{'Content-Type':'text/html; charset=utf-8'}});
     })());
     return;
