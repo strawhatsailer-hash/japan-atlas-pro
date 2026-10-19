@@ -852,7 +852,20 @@ h1,h2,h3,.card-title,.stat-value,.day-title,.place-name{color:var(--atlas-p3-ink
 @media(max-width:360px){.atlas-phase3-day-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.atlas-phase3-day{padding:8px 6px}.atlas-phase3-day>span{font-size:7px}}
 @media(prefers-reduced-motion:reduce){.atlas-phase3-track span,.atlas-phase3-region-track span,.atlas-phase3-day-track span{transition:none}}
 </style>
-</head>
+<style id="atlas-photo-quality-and-content-trim">
+/* Destination imagery: quality over quantity; never present loosely related files as the place. */
+.atlas-gallery-hero-img{object-fit:cover;background:#dfe8df}
+.atlas-photo-tile.is-unavailable{display:none!important}
+.atlas-gallery-hero[data-photo-unavailable="true"] .atlas-gallery-hero-label{color:#18363b!important;text-shadow:none!important}
+.place-quick-facts{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0;color:#5f736c;font-size:12px;font-weight:650}
+.place-quick-facts span{padding:8px 11px;border-radius:999px;background:rgba(232,238,227,.72)}
+.place-more-details{margin:12px 0 4px;border-top:1px solid rgba(194,207,194,.45);padding-top:12px}
+.place-more-details summary{cursor:pointer;color:#365b54;font-size:12px;font-weight:750;list-style:none}
+.place-more-details summary::-webkit-details-marker{display:none}
+.place-more-details summary:after{content:"＋";float:right;color:#a9503d}
+.place-more-details[open] summary:after{content:"−"}
+.place-more-details .detail-line{margin-top:12px}
+</style></head>
 <body>
 <div class="app">
 <header class="topbar">
@@ -1084,6 +1097,31 @@ function selectPlace(id,focusMap=false){state.selectedId=id;let p=state.places.f
 // This is an online enhancement; the planner remains usable if photo search is unavailable.
 window.__atlasPhotos=window.__atlasPhotos||{};const __photoPending=new Set();const __photoIndex={};
 function photoQueryName(p){return photoQueryVariants(p)[0]}
+function photoIdentityTerms(p){
+ const overrides={
+  t1:['senso-ji','sensoji','asakusa'],
+  t2:['kaminarimon','thunder gate','asakusa'],
+  t3:['nakamise','asakusa'],
+  t4:['meiji jingu','meiji shrine'],
+  t5:['shibuya crossing','scramble crossing'],
+  t6:['hachiko','hachiko statue'],
+  t7:['tokyo tower'],
+  t8:['godzilla head','shinjuku'],
+  t9:['magnet by shibuya109','shibuya109'],
+  t10:['suga shrine','suga jinja'],
+  t11:['warner bros studio tour tokyo','studio tour tokyo','harry potter studio tour'],
+  f1:['lake kawaguchiko','kawaguchiko'],
+  f2:['lake ashi','ashi lake','ashinoko','芦ノ湖'],
+  f3:['mount fuji','fuji san','富士山'],
+  k1:['fushimi inari','inari shrine'],
+  k2:['kiyomizu dera','kiyomizudera'],
+  k3:['kinkaku ji','golden pavilion'],
+  o1:['dotonbori','道頓堀']
+ };
+ const base=overrides[p?.id];
+ if(base)return base.map(x=>x.normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase());
+ return String(p?.name||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase().split(/[^a-z0-9\\u3040-\\u30ff\\u3400-\\u9fff]+/).filter(w=>w.length>3&&!['temple','shrine','street','japan','tokyo','kyoto','osaka','fuji','hakone','nature','park','station'].includes(w));
+}
 function photoQueryVariants(p){
  const special={
   't8':['Godzilla Head Hotel Gracery Shinjuku Tokyo','新宿 ゴジラヘッド ホテルグレイスリー'],
@@ -1091,7 +1129,20 @@ function photoQueryVariants(p){
   't10':['Suga Shrine stairs Yotsuya Tokyo Your Name','須賀神社 男坂 君の名は 四谷'],
   'o2':['Hokoku Shrine Osaka Castle Park','大阪城公園 豊國神社'],
   'f2':['Lake Ashi Hakone Japan','Lake Ashi torii Hakone Shrine','芦ノ湖 箱根 湖'],
-  't11':['Warner Bros Studio Tour Tokyo Harry Potter','Warner Bros Studio Tour Tokyo official attraction','ワーナー ブラザース スタジオツアー 東京 ハリー ポッター']
+  't11':['intitle:Warner Bros Studio Tour Tokyo Harry Potter','intitle:Warner Bros Studio Tour Tokyo','ワーナー ブラザース スタジオツアー 東京'],
+  't1':['intitle:Senso-ji Asakusa','浅草寺 本堂 外観'],
+  't2':['intitle:Kaminarimon Asakusa','雷門 浅草'],
+  't3':['intitle:Nakamise Asakusa','仲見世通り 浅草'],
+  't4':['intitle:Meiji Jingu Shrine','明治神宮 鳥居'],
+  't5':['intitle:Shibuya Crossing Tokyo','渋谷スクランブル交差点'],
+  't7':['intitle:Tokyo Tower Japan','東京タワー'],
+  'f1':['intitle:Lake Kawaguchiko Mount Fuji','河口湖 富士山'],
+  'f2':['intitle:Lake Ashi Hakone','芦ノ湖 箱根'],
+  'f3':['intitle:Mount Fuji Japan','富士山 山頂'],
+  'k1':['intitle:Fushimi Inari Taisha','伏見稲荷大社 千本鳥居'],
+  'k2':['intitle:Kiyomizu dera Kyoto','清水寺 京都'],
+  'k3':['intitle:Kinkaku ji Kyoto','金閣寺 京都'],
+  'o1':['intitle:Dotonbori Osaka','道頓堀 大阪']
  };
  if(special[p?.id])return special[p.id];
  let n=p?.name||'Japan destination';
@@ -1162,7 +1213,7 @@ function openAtlasPhotoDetails(place,images,index){
  const source=modal.querySelector('#atlasPhotoModalSource');source.href=im.page||'#';source.style.display=im.page?'inline-flex':'none';source.setAttribute('aria-label','Open original source and licence for '+place.name);
  modal.classList.add('is-open');document.body.classList.add('atlas-modal-open');modal.querySelector('.atlas-photo-close').focus({preventScroll:true});
 }
-const PHOTO_SEARCH_CACHE_KEY='japan-atlas-photo-search-v4';
+const PHOTO_SEARCH_CACHE_KEY='japan-atlas-photo-search-v5';
 function readPhotoSearchCache(id){try{const all=JSON.parse(localStorage.getItem(PHOTO_SEARCH_CACHE_KEY)||'{}');const entry=all[id];if(entry&&Array.isArray(entry.photos)&&entry.photos.length>0&&Date.now()-entry.savedAt<7*24*60*60*1000)return entry.photos}catch(e){}return null}
 function writePhotoSearchCache(id,photos){try{if(!Array.isArray(photos)||!photos.length)return;const all=JSON.parse(localStorage.getItem(PHOTO_SEARCH_CACHE_KEY)||'{}');all[id]={savedAt:Date.now(),photos};localStorage.setItem(PHOTO_SEARCH_CACHE_KEY,JSON.stringify(all))}catch(e){}}
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
@@ -1183,11 +1234,11 @@ async function loadOnlinePlacePhotos(p,force=false){
  try{
   let clean=[];const variants=photoQueryVariants(p);
   for(const q of variants){const batch=await fetchCommonsQuery(q);clean.push(...batch);clean=clean.filter((x,i,a)=>a.findIndex(y=>y.page===x.page)===i);if(clean.length>=4)break;await sleep(250)}
-  const terms=(p.name+' '+p.area).toLowerCase().split(/[^a-z0-9]+/).filter(t=>t.length>3&&!['lake','place','japan','view','tokyo','kyoto','osaka','fuji','hakone'].includes(t));
-  const relevance=x=>{const text=(x.title+' '+x.description).normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();return terms.reduce((n,w)=>n+(text.includes(w)?1:0),0)};
-  clean=clean.filter(x=>relevance(x)>=Math.min(2,terms.length));
+  const identity=photoIdentityTerms(p);
+  const relevance=x=>{const title=String(x.title||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();const desc=String(x.description||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();const titleHits=identity.filter(w=>title.includes(w)).length;const descHits=identity.filter(w=>desc.includes(w)).length;return titleHits*4+Math.min(descHits,1)};
+  clean=clean.filter(x=>{const title=String(x.title||'').normalize('NFD').replace(/[\\u0300-\\u036f]/g,'').toLowerCase();const hasPlaceName=identity.some(w=>title.includes(w));return hasPlaceName&&relevance(x)>=4});
   clean.sort((a,b)=>relevance(b)-relevance(a));
-  window.__atlasPhotos[p.id]=clean.slice(0,8);if(window.__atlasPhotos[p.id].length)writePhotoSearchCache(p.id,window.__atlasPhotos[p.id]);renderMapPlaces();
+  window.__atlasPhotos[p.id]=clean.slice(0,6);if(window.__atlasPhotos[p.id].length)writePhotoSearchCache(p.id,window.__atlasPhotos[p.id]);renderMapPlaces();
  }catch(e){window.__atlasPhotos[p.id]=[]}
  finally{__photoPending.delete(p.id);if(currentPlace()?.id===p.id)renderPhotoGallery(p)}
 }
@@ -1211,10 +1262,12 @@ async function loadPlacePhotos(p,force=false){
 window.retryPlacePhotos=id=>{const p=state.places.find(x=>x.id===id);if(p){delete window.__atlasPhotos[id];loadPlacePhotos(p,true)}};window.scrollPhotos=(id,dir)=>{const track=document.getElementById('photoTrack-'+id);if(track)track.scrollBy({left:dir*Math.max(210,track.clientWidth*.78),behavior:'smooth'})};
 function renderInspector(){let p=currentPlace();if(!p)return;loadPlacePhotos(p);document.getElementById('placeEmoji').textContent=categoryEmoji(p);document.getElementById('placeTitle').textContent=p.name;document.getElementById('placeArea').textContent=p.area+' · '+p.category;document.getElementById('placeDetails').innerHTML=`
 <div class="tag-row">${statusTag(p.status)}<span class="tag">${esc(p.area)}</span><span class="tag">${p.duration?Math.round(p.duration)+' min':'Duration unset'}</span></div>
-<div class="detail-line"><div class="label">Why it's here</div><div class="value">${esc(p.notes||'No notes yet.')}</div></div>
-<div class="detail-line"><div class="label">Address</div><div class="value">${esc(p.address||'Address not entered')}</div></div>
-<div class="detail-line"><div class="label">Visit time</div><div class="value">${p.duration?Math.floor(p.duration/60)+'h '+(p.duration%60? p.duration%60+'m':''): 'Not estimated'} · excludes travel and queues</div></div>
-<div class="detail-line"><div class="label">Cost estimate</div><div class="value">${fmt(p.cost)} per person (editable estimate)</div></div>
+<div class="place-quick-facts"><span>${p.duration?Math.round(p.duration)+' min visit':'Visit time not set'}</span><span>${fmt(p.cost)} est. / person</span></div>
+<details class="place-more-details"><summary>Notes, address &amp; visit details</summary>
+<div class="detail-line"><div class="label">Why visit</div><div class="value">${esc(p.notes||'No notes added.')}</div></div>
+<div class="detail-line"><div class="label">Address</div><div class="value">${esc(p.address||'Address not added')}</div></div>
+<div class="detail-line"><div class="label">Timing</div><div class="value">${p.duration?Math.floor(p.duration/60)+'h '+(p.duration%60? p.duration%60+'m':''): 'Not estimated'} · travel and queues extra</div></div>
+</details>
 <div class="detail-line"><div class="label">Day assignment</div><div class="value">${p.day?'Day '+p.day+' · '+esc(state.dayTitles[p.day]||''):'Not assigned to a day yet'}</div></div>
 <div class="place-actions"><button class="btn primary small" onclick="editPlace('${p.id}')">Edit details</button><button class="btn small" onclick="focusOnPlace('${p.id}');navTo('map')">Show on map</button><button class="btn small" onclick="openGoogle('${p.id}')">Navigate ↗</button><button class="btn small" onclick="assignQuick('${p.id}')">Assign day</button></div>`}
 // Self-contained Japan regional basemap. Coastline geometry is bundled in this file;
