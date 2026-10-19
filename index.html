@@ -1162,7 +1162,7 @@ function openAtlasPhotoDetails(place,images,index){
  modal.classList.add('is-open');document.body.classList.add('atlas-modal-open');modal.querySelector('.atlas-photo-close').focus({preventScroll:true});
 }
 const PHOTO_SEARCH_CACHE_KEY='japan-atlas-photo-search-v3';
-function readPhotoSearchCache(id){try{const all=JSON.parse(localStorage.getItem(PHOTO_SEARCH_CACHE_KEY)||'{}');const entry=all[id];if(entry&&Array.isArray(entry.photos)&&entry.photos.length&&Date.now()-entry.savedAt<7*24*60*60*1000)return entry.photos;if(entry&&Array.isArray(entry.photos)&&entry.photos.length===0&&Date.now()-entry.savedAt<5*60*1000)return []}catch(e){}return null}
+function readPhotoSearchCache(id){try{const all=JSON.parse(localStorage.getItem(PHOTO_SEARCH_CACHE_KEY)||'{}');const entry=all[id];if(entry&&Array.isArray(entry.photos)&&entry.photos.length>0&&Date.now()-entry.savedAt<7*24*60*60*1000)return entry.photos}catch(e){}return null}
 function writePhotoSearchCache(id,photos){try{if(!Array.isArray(photos)||!photos.length)return;const all=JSON.parse(localStorage.getItem(PHOTO_SEARCH_CACHE_KEY)||'{}');all[id]={savedAt:Date.now(),photos};localStorage.setItem(PHOTO_SEARCH_CACHE_KEY,JSON.stringify(all))}catch(e){}}
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function fetchCommonsQuery(q){
