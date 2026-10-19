@@ -1356,13 +1356,6 @@ setTimeout(()=>{const p=currentPlace();if(p)loadPlacePhotos(p)},250);
 
 <!-- UX patch: readable white controls and synchronous Google Maps route navigation. Online street tiles still require connectivity. -->
 <script>
-// Progressive Web App shell: the planner can reopen offline after its first successful visit.
-// Live map styles/tiles and external routing are online services and are not claimed to work offline.
-if ('serviceWorker' in navigator && /^https?:$/.test(location.protocol)) {
-  window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js').catch(() => {}));
-}
-</script>
-<script>
 /* Recovery guard: expose fatal startup errors instead of leaving a silent blank page. */
 (function(){
   function report(message){
