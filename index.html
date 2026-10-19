@@ -1089,13 +1089,15 @@ function photoQueryVariants(p){
   't8':['Godzilla Head Hotel Gracery Shinjuku Tokyo','新宿 ゴジラヘッド ホテルグレイスリー'],
   't9':['MAGNET by SHIBUYA109 exterior Shibuya Tokyo','マグネット バイ 渋谷109 外観','MAGNET by SHIBUYA109 Shibuya Crossing'],
   't10':['Suga Shrine stairs Yotsuya Tokyo Your Name','須賀神社 男坂 君の名は 四谷'],
-  'o2':['Hokoku Shrine Osaka Castle Park','大阪城公園 豊國神社']
+  'o2':['Hokoku Shrine Osaka Castle Park','大阪城公園 豊國神社'],
+  'f3':['Lake Ashi Hakone Japan','Lake Ashi torii Hakone Shrine','芦ノ湖 箱根 湖']
  };
  if(special[p?.id])return special[p.id];
  let n=p?.name||'Japan destination';
- const fixes=[['Warner Bros. Studio Tour Tokyo – The Making of Harry Potter','Warner Bros Studio Tour Tokyo Harry Potter'],['Senso-ji Temple','Senso-ji Asakusa Tokyo'],['Nakamise Shopping Street','Nakamise-dori Asakusa Tokyo'],['Shibuya Crossing','Shibuya Scramble Crossing Tokyo'],['Meiji Jingu','Meiji Shrine Tokyo'],['Fushimi Inari Taisha','Fushimi Inari Shrine Kyoto'],['Kiyomizu-dera','Kiyomizu-dera Kyoto temple'],['Kinkaku-ji (Golden Pavilion)','Kinkaku-ji Golden Pavilion Kyoto'],['Lake Kawaguchiko','Lake Kawaguchiko Mount Fuji'],['Hakone Shrine','Hakone Shrine Lake Ashi'],['Dotonbori','Dotonbori Osaka canal'],['Godzilla Head, Shinjuku','Godzilla Head Shinjuku Tokyo'],['ONE PIECE Mugiwara Store','ONE PIECE Mugiwara Store Shibuya PARCO'],['Suga Shrine Stairs (Your Name)','Suga Shrine stairs Yotsuya Tokyo']];
+ const fixes=[['Warner Bros. Studio Tour Tokyo – The Making of Harry Potter','Warner Bros Studio Tour Tokyo Harry Potter'],['Senso-ji Temple','Senso-ji Asakusa Tokyo'],['Nakamise Shopping Street','Nakamise-dori Asakusa Tokyo'],['Shibuya Crossing','Shibuya Scramble Crossing Tokyo'],['Meiji Jingu','Meiji Shrine Tokyo'],['Fushimi Inari Taisha','Fushimi Inari Shrine Kyoto'],['Kiyomizu-dera','Kiyomizu-dera Kyoto temple'],['Kinkaku-ji (Golden Pavilion)','Kinkaku-ji Golden Pavilion Kyoto'],['Lake Kawaguchiko','Lake Kawaguchiko Mount Fuji'],['Lake Ashi / Motohakone','Lake Ashi Hakone Japan'],['Hakone Shrine','Hakone Shrine Lake Ashi'],['Dotonbori','Dotonbori Osaka canal'],['Godzilla Head, Shinjuku','Godzilla Head Shinjuku Tokyo'],['ONE PIECE Mugiwara Store','ONE PIECE Mugiwara Store Shibuya PARCO'],['Suga Shrine Stairs (Your Name)','Suga Shrine stairs Yotsuya Tokyo']];
  for(const [a,b] of fixes){if(n.toLowerCase()===a.toLowerCase()){n=b;break}}
- return [(n+' '+p.area+' Japan').replace(/[()]/g,' ').replace(/  +/g,' ').trim()];
+ const primary=(n+' '+p.area+' Japan').replace(/[()]/g,' ').replace(/  +/g,' ').trim();
+ return [primary,n+' Japan',p.area+' Japan landscape travel photo'].filter((q,i,a)=>q&&a.indexOf(q)===i);
 }
 function displayPhotoTitle(im,index,place){
  const original=String(im?.title||'').replace(/^File:/i,'').replace(/\.(jpe?g|png|webp|gif|svg)$/i,'').replaceAll('_',' ').replace(/[-]+/g,' ').replace(/\s+/g,' ').trim();
@@ -1160,8 +1162,8 @@ function openAtlasPhotoDetails(place,images,index){
  modal.classList.add('is-open');document.body.classList.add('atlas-modal-open');modal.querySelector('.atlas-photo-close').focus({preventScroll:true});
 }
 const PHOTO_SEARCH_CACHE_KEY='japan-atlas-photo-search-v3';
-function readPhotoSearchCache(id){try{const all=JSON.parse(localStorage.getItem(PHOTO_SEARCH_CACHE_KEY)||'{}');const entry=all[id];if(entry&&Date.now()-entry.savedAt<7*24*60*60*1000&&Array.isArray(entry.photos))return entry.photos}catch(e){}return null}
-function writePhotoSearchCache(id,photos){try{const all=JSON.parse(localStorage.getItem(PHOTO_SEARCH_CACHE_KEY)||'{}');all[id]={savedAt:Date.now(),photos};localStorage.setItem(PHOTO_SEARCH_CACHE_KEY,JSON.stringify(all))}catch(e){}}
+function readPhotoSearchCache(id){try{const all=JSON.parse(localStorage.getItem(PHOTO_SEARCH_CACHE_KEY)||'{}');const entry=all[id];if(entry&&Array.isArray(entry.photos)&&entry.photos.length&&Date.now()-entry.savedAt<7*24*60*60*1000)return entry.photos;if(entry&&Array.isArray(entry.photos)&&entry.photos.length===0&&Date.now()-entry.savedAt<5*60*1000)return []}catch(e){}return null}
+function writePhotoSearchCache(id,photos){try{if(!Array.isArray(photos)||!photos.length)return;const all=JSON.parse(localStorage.getItem(PHOTO_SEARCH_CACHE_KEY)||'{}');all[id]={savedAt:Date.now(),photos};localStorage.setItem(PHOTO_SEARCH_CACHE_KEY,JSON.stringify(all))}catch(e){}}
 const sleep=ms=>new Promise(resolve=>setTimeout(resolve,ms));
 async function fetchCommonsQuery(q){
  const url='https://commons.wikimedia.org/w/api.php?action=query&generator=search&gsrsearch='+encodeURIComponent('filetype:bitmap '+q)+'&gsrnamespace=6&gsrlimit=12&prop=imageinfo&iiprop=url|extmetadata&iiurlwidth=760&format=json&origin=*';
@@ -1180,9 +1182,9 @@ async function loadOnlinePlacePhotos(p,force=false){
  try{
   let clean=[];const variants=photoQueryVariants(p);
   for(const q of variants){const batch=await fetchCommonsQuery(q);clean.push(...batch);clean=clean.filter((x,i,a)=>a.findIndex(y=>y.page===x.page)===i);if(clean.length>=4)break;await sleep(250)}
-  const terms=(p.name+' '+p.area).toLowerCase().split(/[^a-z0-9]+/).filter(t=>t.length>3);
-  clean.sort((a,b)=>{const score=x=>{const text=(x.title+' '+x.description).toLowerCase();return terms.reduce((n,w)=>n+(text.includes(w)?1:0),0)};return score(b)-score(a)});
-  window.__atlasPhotos[p.id]=clean.slice(0,8);writePhotoSearchCache(p.id,window.__atlasPhotos[p.id]);renderMapPlaces();
+  const terms=(p.name+' '+p.area).toLowerCase().split(/[^a-z0-9]+/).filter(t=>t.length>3&&!['lake','place','japan','view'].includes(t));
+  clean.sort((a,b)=>{const score=x=>{const text=(x.title+' '+x.description).toLowerCase();return terms.reduce((n,w)=>n+(text.includes(w)?3:0),0)+(text.includes(p.area.toLowerCase())?2:0)};return score(b)-score(a)});
+  window.__atlasPhotos[p.id]=clean.slice(0,8);if(window.__atlasPhotos[p.id].length)writePhotoSearchCache(p.id,window.__atlasPhotos[p.id]);renderMapPlaces();
  }catch(e){window.__atlasPhotos[p.id]=[]}
  finally{__photoPending.delete(p.id);if(currentPlace()?.id===p.id)renderPhotoGallery(p)}
 }
