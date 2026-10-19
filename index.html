@@ -575,6 +575,27 @@ img{max-width:100%}
  .card,.stat,.day-card,.decision-card,.table-wrap,.check-item,input,select,textarea{border-color:#89949a!important}
  .subtitle,.muted,.tiny,.card-sub{color:#46545b!important}
 }
+
+/* Final mobile polish: full-width search and high-contrast budget confirmation. */
+@media (max-width:760px){
+ .topbar{grid-template-columns:minmax(0,1fr) auto!important;grid-template-rows:auto auto!important}
+ .top-actions{display:contents!important}
+ .top-actions .btn.primary{grid-column:2!important;grid-row:1!important}
+ .top-search{display:block!important;grid-column:1/-1!important;grid-row:2!important;width:100%!important;min-width:0!important;max-width:none!important;margin:0!important}
+ .top-search input{display:block!important;width:100%!important;min-width:0!important;box-sizing:border-box!important;background:#fffdf8!important;color:#19323a!important;border:1px solid #d9dfd8!important}
+}
+#atlasBudgetSyncSummary{background:#eef3ed!important;color:#18313a!important;border-color:#d5e0d7!important}
+#atlasBudgetSyncSummary span,#atlasBudgetSyncSummary strong{color:#18313a}
+#atlasBudgetSyncSummary strong[style*="#b54736"]{color:#b54736!important}
+#atlasBudgetSyncSummary strong[style*="#247a59"]{color:#247a59!important}
+@media (max-width:420px){
+ .modal-backdrop.open[style*="z-index:3000"]{align-items:flex-end!important;padding:10px!important;padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;overflow-y:auto!important}
+ .modal-backdrop.open[style*="z-index:3000"]>section[aria-labelledby="syncConfirmTitle"]{width:100%!important;max-height:calc(94dvh - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px))!important;overflow-y:auto!important;overscroll-behavior:contain!important;padding:18px!important;border-radius:22px!important}
+ .modal-backdrop.open[style*="z-index:3000"]>section[aria-labelledby="syncConfirmTitle"] h2{font-size:clamp(21px,6vw,25px)!important}
+ .modal-backdrop.open[style*="z-index:3000"]>section[aria-labelledby="syncConfirmTitle"]>div:last-child{display:grid!important;grid-template-columns:1fr 1fr!important;gap:8px!important}
+ .modal-backdrop.open[style*="z-index:3000"]>section[aria-labelledby="syncConfirmTitle"]>div:last-child button{min-width:0!important;padding:12px 8px!important;font-size:13px!important;overflow-wrap:anywhere!important}
+}
+
 </style>
 
 </head>
@@ -1062,7 +1083,7 @@ function bind(){
   <div style="font-size:10px;letter-spacing:.15em;font-weight:850;color:var(--accent,#c84f3b);text-transform:uppercase;margin-bottom:9px">Budget confirmation</div>
   <h2 id="syncConfirmTitle" style="font-size:23px;line-height:1.15;margin:0 0 10px">Replace attraction budget?</h2>
   <p style="font-size:13px;line-height:1.6;color:var(--muted,#5d6d70);margin:0 0 16px">This will replace your current <strong>${esc(category.name)}</strong> allowance with the sum of your place estimates. It will not add a second expense.</p>
-  <div style="display:grid;grid-template-columns:1fr auto;gap:9px 14px;padding:14px;border:1px solid var(--line,#e2e5df);border-radius:14px;background:#eef3ed;color:#18313a;font-size:13px">
+  <div id="atlasBudgetSyncSummary" style="display:grid;grid-template-columns:1fr auto;gap:9px 14px;padding:14px;border:1px solid #d5e0d7;border-radius:14px;background:#eef3ed;color:#18313a;font-size:13px">
    <span>Current allowance</span><strong>${fmt(previous)}</strong>
    <span>Place estimates</span><strong>${fmt(total)}</strong>
    <span style="font-weight:800">Change</span><strong style="color:${total<previous?'#b54736':'#247a59'}">${total<previous?'−': '+'}${fmt(Math.abs(total-previous))}</strong>
