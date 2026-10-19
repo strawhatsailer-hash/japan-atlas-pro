@@ -193,6 +193,14 @@ input::placeholder,textarea::placeholder{color:#78869a!important;opacity:1}
 .card,.stat,.day-card{box-shadow:0 3px 16px rgba(30,50,80,.045)!important}
 @media(max-width:720px){.map-wrap{min-height:62vh;min-height:clamp(420px,62svh,690px)}.maplibregl-ctrl-top-right{top:58px!important}.map-online-notice{font-size:10px!important;padding:7px 9px!important}.maplibregl-popup-content{padding:10px!important}.budget-row{grid-template-columns:minmax(0,1fr) 92px 32px!important}.budget-row input{min-width:0;font-size:14px!important}.topbar{position:sticky;top:0;z-index:1001}.mobile-nav{z-index:1100}.main{padding-bottom:calc(100px + env(safe-area-inset-bottom))!important}}
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* Phase 1 map interactions: readable, touch-friendly clustered pins */
+.atlas-map-cluster{width:42px;height:42px;border:3px solid #fff;border-radius:50%;background:#183b46;color:#fff;font-weight:850;font-size:13px;box-shadow:0 4px 15px #17203345;cursor:pointer;display:grid;place-items:center;transition:transform .16s ease,box-shadow .16s ease}
+.atlas-map-cluster:hover{transform:scale(1.08);box-shadow:0 6px 18px #17203355}
+.atlas-map-cluster:focus-visible,.atlas-map-pin:focus-visible{outline:3px solid #f59e0b;outline-offset:3px}
+.atlas-map-pin{width:30px;height:30px;border:3px solid #fff;border-radius:50% 50% 50% 5px;transform:rotate(-45deg);background:var(--pin-color,#176bda);color:#fff;box-shadow:0 3px 12px #17203355;display:grid;place-items:center;padding:0;cursor:pointer}
+.atlas-map-pin span{font:800 13px/1 system-ui,sans-serif;transform:rotate(45deg)}
+@media(max-width:720px){.atlas-map-cluster{width:46px;height:46px;font-size:14px}.atlas-map-pin{width:34px;height:34px}.maplibregl-ctrl-group button{min-width:42px!important;min-height:42px!important}}
 </style>
 
 <style id="atlas-premium-system-v1">
@@ -1340,13 +1348,72 @@ setTimeout(()=>{const p=currentPlace();if(p)loadPlacePhotos(p)},250);
  function initMaps(){if(!window.maplibregl||libReady)return;libReady=true;
   [['realMap',true],['realMap2',false]].forEach(([id,overview])=>{const el=document.getElementById(id);if(!el)return;el.style.display='block';const fallback=document.getElementById(id==='realMap'?'mapFallback':'mapFallback2');if(fallback)fallback.style.display='none';
    const map=new maplibregl.Map({container:el,style:atlasMapStyle,center:[137.6,36.2],zoom:4.6,attributionControl:true,cooperativeGestures:true});map.addControl(new maplibregl.NavigationControl({showCompass:false}),'top-right');map.addControl(new maplibregl.ScaleControl({unit:'metric'}),'bottom-left');
-   const obj={id,map,overview,markers:[],group:{getBounds:()=>map.getBounds(),isValid:()=>true,pad:()=>map.getBounds()}};maps.push(obj);map.on('load',()=>{renderMaps();setTimeout(()=>map.resize(),100)});map.on('error',e=>{if(!map.loaded())showMapError('Map tiles/style could not load. Check your connection or content blocker and reload.');});
+   const obj={id,map,overview,markers:[],group:{getBounds:()=>map.getBounds(),isValid:()=>true,pad:()=>map.getBounds()}};maps.push(obj);map.on('zoomend',()=>drawMapMarkers(obj,mapPlacesFor(obj)));map.on('load',()=>{renderMaps(true);setTimeout(()=>map.resize(),100)});map.on('error',e=>{if(!map.loaded())showMapError('Map tiles/style could not load. Check your connection or content blocker and reload.');});
   });window.addEventListener('resize',()=>maps.forEach(o=>o.map.resize()));renderMaps();
  }
  let atlasMapStyle='https://tiles.openfreemap.org/styles/liberty';
  const styleToggle=document.getElementById('mapStyleToggle'); if(styleToggle)styleToggle.addEventListener('click',()=>{atlasMapStyle=atlasMapStyle.endsWith('/liberty')?'https://tiles.openfreemap.org/styles/positron':'https://tiles.openfreemap.org/styles/liberty';maps.forEach(o=>o.map.setStyle(atlasMapStyle));styleToggle.textContent=atlasMapStyle.endsWith('/liberty')?'Map style: Colour':'Map style: Soft';});
- function renderMaps(){if(!maps.length)return;maps.forEach(o=>{o.markers.forEach(m=>m.remove());o.markers=[];let list=visiblePlaces();if(o.overview)list=list.filter(p=>['Tokyo','Fuji / Hakone','Kyoto','Osaka'].includes(p.area));list.forEach(p=>{const color=colors[p.area]||colors.Optional;const node=document.createElement('button');node.type='button';node.setAttribute('aria-label',p.name);node.title=p.name;node.style.cssText=`width:28px;height:28px;border:3px solid white;border-radius:50% 50% 50% 5px;transform:rotate(-45deg);background:${color};box-shadow:0 3px 12px #17203355;display:grid;place-items:center;padding:0;cursor:pointer`;const letter=document.createElement('span');letter.textContent=(typeof categoryEmoji==='function'?categoryEmoji(p):(p.area==='Tokyo'?'T':p.area==='Fuji / Hakone'?'F':p.area==='Kyoto'?'K':p.area==='Osaka'?'O':'•'));letter.style.cssText='color:white;font:800 13px system-ui;transform:rotate(45deg)';node.appendChild(letter);const marker=new maplibregl.Marker({element:node,anchor:'bottom'}).setLngLat([+p.lng,+p.lat]).setPopup(new maplibregl.Popup({offset:18,maxWidth:'280px'}).setHTML(popupHtml(p))).addTo(o.map);node.addEventListener('click',()=>{if(typeof window.selectPlace==='function')window.selectPlace(p.id)});o.markers.push(marker)});if(list.length){if(window.state.mapFilter==='All'&&o.overview){o.map.jumpTo({center:[137.6,36.2],zoom:4.6})}else if(list.length===1){o.map.flyTo({center:[+list[0].lng,+list[0].lat],zoom:13})}else{const b=new maplibregl.LngLatBounds();list.forEach(p=>b.extend([+p.lng,+p.lat]));o.map.fitBounds(b,{padding:{top:65,bottom:65,left:45,right:45},maxZoom:12,duration:0})}}o.map.resize()})}
- window.refreshMaps=renderMaps;window.renderOfflineMaps=function(){};window.setMapFilter=function(f){window.state.mapFilter=f;document.querySelectorAll('[data-mapfilter]').forEach(b=>b.classList.toggle('active',b.dataset.mapfilter===f));renderMaps();if(typeof window.renderMapPlaces==='function')window.renderMapPlaces();if(typeof window.save==='function')window.save()};
+ function mapPlacesFor(o){
+  let list=visiblePlaces();
+  if(o.overview)list=list.filter(p=>['Tokyo','Fuji / Hakone','Kyoto','Osaka'].includes(p.area));
+  return list;
+ }
+ function drawMapMarkers(o,list){
+  if(!o||!o.map||!window.maplibregl)return;
+  o.markers.forEach(m=>m.remove());o.markers=[];
+  const map=o.map;
+  const groups=new Map();
+  const shouldCluster=map.getZoom()<10.5&&list.length>1;
+  list.forEach(p=>{
+   const xy=map.project([+p.lng,+p.lat]);
+   const key=shouldCluster?Math.floor(xy.x/58)+':'+Math.floor(xy.y/58):p.id;
+   if(!groups.has(key))groups.set(key,[]);
+   groups.get(key).push(p);
+  });
+  groups.forEach(group=>{
+   if(group.length>1){
+    const node=document.createElement('button');node.type='button';node.className='atlas-map-cluster';
+    node.textContent=String(group.length);node.setAttribute('aria-label',group.length+' destinations; zoom in to explore');
+    node.title=group.length+' destinations · tap to zoom';
+    node.addEventListener('click',()=>{
+     const bounds=new maplibregl.LngLatBounds();
+     group.forEach(p=>bounds.extend([+p.lng,+p.lat]));
+     const first=group[0],samePoint=group.every(p=>+p.lng===+first.lng&&+p.lat===+first.lat);
+     if(samePoint)map.easeTo({center:[+first.lng,+first.lat],zoom:Math.min(map.getZoom()+2,15)});
+     else map.fitBounds(bounds,{padding:70,maxZoom:14,duration:450});
+    });
+    const center=group.reduce((a,p)=>[a[0]+(+p.lng),a[1]+(+p.lat)],[0,0]).map(v=>v/group.length);
+    o.markers.push(new maplibregl.Marker({element:node,anchor:'center'}).setLngLat(center).addTo(map));
+    return;
+   }
+   const p=group[0],color=colors[p.area]||colors.Optional;
+   const node=document.createElement('button');node.type='button';node.className='atlas-map-pin';
+   node.setAttribute('aria-label','Open destination: '+p.name);node.title=p.name;
+   node.style.setProperty('--pin-color',color);
+   const letter=document.createElement('span');
+   letter.textContent=(typeof categoryEmoji==='function'?categoryEmoji(p):(p.area==='Tokyo'?'T':p.area==='Fuji / Hakone'?'F':p.area==='Kyoto'?'K':p.area==='Osaka'?'O':'•'));
+   node.appendChild(letter);
+   const marker=new maplibregl.Marker({element:node,anchor:'bottom'}).setLngLat([+p.lng,+p.lat]).setPopup(new maplibregl.Popup({offset:18,maxWidth:'280px'}).setHTML(popupHtml(p))).addTo(map);
+   node.addEventListener('click',()=>{if(typeof window.selectPlace==='function')window.selectPlace(p.id)});
+   o.markers.push(marker);
+  });
+ }
+ function renderMaps(fitCamera=false){
+  if(!maps.length)return;
+  maps.forEach(o=>{
+   const list=mapPlacesFor(o);drawMapMarkers(o,list);
+   if(fitCamera&&list.length){
+    if(window.state.mapFilter==='All'&&o.overview){o.map.jumpTo({center:[137.6,36.2],zoom:4.6})}
+    else if(list.length===1){o.map.flyTo({center:[+list[0].lng,+list[0].lat],zoom:13,duration:350})}
+    else{
+     const bounds=new maplibregl.LngLatBounds();list.forEach(p=>bounds.extend([+p.lng,+p.lat]));
+     o.map.fitBounds(bounds,{padding:{top:72,bottom:72,left:48,right:48},maxZoom:12,duration:350});
+    }
+   }
+   o.map.resize();
+  });
+ }
+ window.refreshMaps=renderMaps;window.renderOfflineMaps=function(){};window.setMapFilter=function(f){window.state.mapFilter=f;document.querySelectorAll('[data-mapfilter]').forEach(b=>b.classList.toggle('active',b.dataset.mapfilter===f));renderMaps(true);if(typeof window.renderMapPlaces==='function')window.renderMapPlaces();if(typeof window.save==='function')window.save()};
  document.addEventListener('DOMContentLoaded',()=>{document.querySelectorAll('.map-wrap').forEach(el=>{el.style.background='#f3f6f8';const old=el.querySelector('.map-online-notice');if(old)old.remove();const n=document.createElement('div');n.className='map-online-notice';n.textContent='Live street map · pinch/scroll to zoom · drag to pan · internet required';n.style.cssText='position:absolute;z-index:5;left:10px;right:58px;top:10px;background:#ffffffed;border:1px solid #dce3ec;border-radius:10px;padding:8px 10px;color:#4b5b70;font-size:11px;pointer-events:none';el.appendChild(n)});loadMapLibre()});
 })();
 </script>
