@@ -36,6 +36,7 @@ jobs:
           # Publish the stylesheets linked by index.html.
           mkdir -p dist/assets
           cp -R assets/css dist/assets/
+          cp -R assets/js dist/assets/
       - name: Restore reusable photo bundle cache
         id: photo-cache-restore
         uses: actions/cache/restore@v4
